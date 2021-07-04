@@ -9,7 +9,7 @@
 // 
 
 // 组件基础类
-const RUNTIME_VERSION = 20201209
+const RUNTIME_VERSION = 202017042031
 
 class Base {
   constructor (arg="") {
