@@ -1,22 +1,29 @@
-on: push
-name: Tests / test-org-mirror
+name: GitHub & Gitee Mirror Action
+
+on:
+  push:
+    paths:
+    - '.github/workflows/**'
+    branches: [ master ]
+  pull_request:
+    paths:
+    - '.github/workflows/**'
+    branches: [ master ]
+    
 jobs:
-  run:
-    name: Run
+  build:
+
     runs-on: ubuntu-latest
+
     steps:
-    - name: Checkout source code
-      uses: Yikun/hub-mirror-action@master
-    - name: Mirror Github to Gitee
-      uses: ./.
+
+    - name: Mirror the Github organization repos to Gitee.
+      uses: Yikun/hub-mirror-action@v1.0
       with:
         src: github/Scriptables
         dst: gitee/Scriptables
         dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-        dst_token: ${{ secrets.GITEE_TOKEN }}
-        account_type: org
-        # Only sync normal repo
-        black_list: 'test'
-        white_list: 'normal,test,empty'
-        force_update: true
+        dst_token:  ${{ secrets.GITEE_TOKEN }}
+        timeout: 600
         debug: true
+        force_update: true
