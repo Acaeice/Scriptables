@@ -29,7 +29,7 @@ jobs:
         uses: Yikun/hub-mirror-action@v0.13
         with:
           src: github/Acaeice
-          dst: gitee/nodewuozuo
+          dst: gitee/nodewuzuo
           dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
           dst_token: ${{ secrets.GITEE_TOKEN }}
           static_list: '${{ steps.info.outputs.result }}'
