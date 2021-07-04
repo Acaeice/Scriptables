@@ -1,9 +1,22 @@
-steps:
-- name: Mirror the Github organization repos to Gitee.
-  uses: Yikun/hub-mirror-action@master
-  with:
-    src: github/Scriptables
-    dst: gitee/Scriptables
-    dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-    dst_token: ${{ secrets.GITEE_TOKEN }}
-    account_type: org
+on: push
+name: Tests / test-org-mirror
+jobs:
+  run:
+    name: Run
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout source code
+      uses: actions/checkout@v1
+    - name: Mirror Github to Gitee
+      uses: ./.
+      with:
+        src: github/Scriptables
+        dst: gitee/Scriptables
+        dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
+        dst_token: ${{ secrets.GITEE_TOKEN }}
+        account_type: org
+        # Only sync normal repo
+        black_list: 'test'
+        white_list: 'normal,test,empty'
+        force_update: true
+        debug: true
