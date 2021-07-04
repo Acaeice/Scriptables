@@ -988,12 +988,12 @@ module.exports = {
   }
   if (UPDATED_AT > (+new Date - 1000*60*60)) return console.warn('[-] 1 小时内已检查过更新')
   console.log('[*] 检测开发环境是否有更新..')
-  const req = new Request('https://gitee.com/nodewuozuo/Scriptables/raw/v2-dev/package.json')
+  const req = new Request('https://gitee.com/nodewuozuo/Scriptables/raw/main/package.json')
   const res = await req.loadJSON()
   console.log(`[+] 远程开发环境版本：${res['runtime_ver']}`)
   if (res['runtime_ver'] === RUNTIME_VERSION) return console.warn('[-] 远程版本一致，暂无更新')
   console.log('[+] 开始更新开发环境..')
-  const REMOTE_REQ = new Request('https://gitee.com/nodewuozuo/Scriptables/raw/v2-dev/Scripts/%E3%80%8C%E5%B0%8F%E4%BB%B6%E4%BB%B6%E3%80%8D%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83.js')
+  const REMOTE_REQ = new Request('https://gitee.com/nodewuozuo/Scriptables/raw/main/Scripts/%E3%80%8C%E5%B0%8F%E4%BB%B6%E4%BB%B6%E3%80%8D%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83.js')
   const REMOTE_RES = await REMOTE_REQ.load()
   FILE_MGR.write(FILE_MGR.joinPath(FILE_MGR.documentsDirectory(), UPDATE_FILE), REMOTE_RES);
   const n = new Notification()
