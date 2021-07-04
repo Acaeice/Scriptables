@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout source code
-      uses: actions/checkout@v1
+      uses: Yikun/hub-mirror-action@master
     - name: Mirror Github to Gitee
       uses: ./.
       with:
