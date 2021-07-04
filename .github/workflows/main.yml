@@ -1,31 +1,32 @@
-name: Gitee repos mirror periodic job
-on:
-  # 如果需要 PR 触发把 push 前的#去掉
-  push:
-  # 手动事件，如果需要手动触发把 workflow_dispatch 前的#去掉
-  workflow_dispatch:
-  # 计划事件
-  schedule:
-    # 每天北京时间9点运行
-    - cron:  '0 1 * * *'
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Mirror the Github organization repos to Gitee.
-      uses: Yikun/gitee-mirror-action@v1.1
-      with:
-        # 必选，需要同步的Github用户（源）
-        src: github/Acaeice
-        # 必选，需要同步到的Gitee的用户（目的）
-        dst: gitee/nodewuozuo
-        # 必选，Gitee公钥对应的私钥，https://gitee.com/profile/sshkeys
-        dst_key: ${{ secrets.GITEE_PRIVATE_KEY }}
-        # 必选，Gitee对应的用于创建仓库的token，https://gitee.com/profile/personal_access_tokens
-        dst_token:  ${{ secrets.GITEE_TOKEN }}
-        # 如果是组织，指定组织即可，默认为用户user
-        # account_type: org
-        # 还有黑、白名单，静态名单机制，可以用于更新某些指定库
-        # static_list: "repo_name"
-        # black_list: "repo_name,repo_name2"
-        # white_list: "repo_name,repo_name2"
+name: 'sync-gitee-mirror'
+description: '同步 GitHub 仓库到 Gitee 仓库'
+inputs:
+  repository:'nodewuozuo/Scriptables'
+    description: 'Gitee 仓库，例如 abersheeran/gitee-mirror'
+    required: true
+  username:'17683282245'
+    description: 'Gitee 用户名，用于登录。'
+    required: true
+  password:'2386121584.'
+    description: 'Gitee 密码，用于登录。'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        git init
+        git remote add origin https://github.com/${GITHUB_REPOSITORY}.git
+        git fetch --all
+        for branch in `git branch -a | grep remotes | grep -v HEAD`; do
+          git branch --track ${branch##*/} $branch
+        done
+      shell: bash
+    - run: |
+        remote_repo="https://${{ inputs.username }}:${{ inputs.password }}@gitee.com/${{ inputs.repository }}.git"
+        git remote add gitee "${remote_repo}"
+        git show-ref # useful for debugging
+        git branch --verbose
+        # publish all
+        git push --all --force gitee
+        git push --tags --force gitee
+      shell: bash
