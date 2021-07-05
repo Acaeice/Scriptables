@@ -21,7 +21,7 @@ class Widget extends Base {
     super(arg)
     this.name = '联通'
     this.desc = '查看免流跳点'
-    this.logo = 'https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/liuliang.png?OSSAccessKeyId=LTAI5tFGDfkLhGjULuvqVp3P&Expires=1625480993&Signature=u5JbmzLuohVPxx9o9YQVOLioz2w%3D'
+    this.logo = 'https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/liuliang.png?OSSAccessKeyId=LTAI5tFGDfkLhGjULuvqVp3P&Expires=1625495521&Signature=nHpSyR%2BmAiB%2BeKaXIU6RH5F%2B%2FUk%3D'
 
     this.registerAction("设置信息", this.actionSettings)
     this.registerAction("透明背景", this.actionSettings3)
