@@ -34,7 +34,7 @@ class Widget extends Base {
    * 可以根据 this.widgetFamily 来判断小组件尺寸，以返回不同大小的内容
    */
   async render () {
-    if (!this.settings || !this.settings['name'] || !this.settings['date'] || !this.settings['gender']) {
+    if (!this.settings || !this.settings['name']) {
       return await this.renderConfigure()
     }
     switch (this.widgetFamily) {
