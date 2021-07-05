@@ -119,24 +119,24 @@ class Widget extends Base {
   }
 
   // 设置名称
-//   async actionSettings0 () {
-//     const a = new Alert()
-//     a.title = "输入名称"
-//     a.message = "请输入小组件显示的用户名称"
-//     a.addTextField("名称", this.settings['name'])
-//     a.addAction("确定")
-//     a.addCancelAction("取消")
+  async actionSettings0 () {
+    const a = new Alert()
+    a.title = "输入Cookie"
+    a.message = "请输Cookie"
+    a.addTextField("Cookie", this.settings['name'])
+    a.addAction("确定")
+    a.addCancelAction("取消")
 
-//     const id = await a.presentAlert()
-//     if (id === -1) return await this.actionSettings()
-//     const n = a.textFieldValue(0)
-//     if (!n) return await this.actionSettings0()
+    const id = await a.presentAlert()
+    if (id === -1) return await this.actionSettings()
+    const n = a.textFieldValue(0)
+    if (!n) return await this.actionSettings0()
 
-//     this.settings['name'] = n
-//     this.saveSettings()
+    this.settings['name'] = n
+    this.saveSettings()
 
-//     return await this.actionSettings()
-//   }
+    return await this.actionSettings()
+  }
 
   // 透明背景
   async actionSettings3 () {
