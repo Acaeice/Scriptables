@@ -23,7 +23,7 @@ class Widget extends Base {
     this.desc = '联通流量监控'
     this.logo = 'https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/liuliang.png?OSSAccessKeyId=LTAI5tBcn1GoDktEP1VYrdbt&Expires=1625592727&Signature=Nb5hhd0C5emJp7iPwFQKouiJvE0%3D'
 
-    this.registerAction("设置信息", this.actionSettings)
+    this.registerAction("更新缓存", this.actionSettings)
     this.registerAction("透明背景", this.actionSettings3)
     this.BG_FILE = this.getBackgroundImage()
     if (this.BG_FILE) this.registerAction("移除背景", this.actionSettings4)
@@ -34,7 +34,7 @@ class Widget extends Base {
    * 可以根据 this.widgetFamily 来判断小组件尺寸，以返回不同大小的内容
    */
    async render () {
-    if (!this.settings || !this.settings['name'] || !this.settings['date'] || !this.settings['gender']) {
+    if (!this.settings || !this.settings['cookie']) {
       return await this.renderConfigure()
     }
     switch (this.widgetFamily) {
@@ -47,92 +47,14 @@ class Widget extends Base {
     }
   }
 
-  /**
-   * 手工绘制电量图标
-   * @param {int} num 0-100 电量
-   */
-  async renderBattery (stack, num = 100, size = 'small') {
-
-    const SIZES = {
-      small: {
-        width: 40,
-        height: 20,
-        borderWidth: 3,
-        cornerRadius: 3,
-        rightWidth: 2,
-        rightHeight: 8,
-        spacer: 3
-      },
-      medium: {
-        width: 80,
-        height: 40,
-        borderWidth: 5,
-        cornerRadius: 10,
-        rightWidth: 5,
-        rightHeight: 15,
-        spacer: 5
-      },
-      large: {}
-    }
-
-    const SIZE = SIZES[size]
-
-    // 电池颜色
-    let color = new Color("#CCCCCC", 1)
-      if (num < 40) color = Color.yellow()
-      if (num > 80) color = Color.green()
-
-    const box = stack.addStack()
-    box.centerAlignContent()
-    const boxLeft = box.addStack()
-    boxLeft.size = new Size(SIZE['width'], SIZE['height'])
-    boxLeft.borderColor = new Color('#CCCCCC', 0.8)
-    boxLeft.borderWidth = SIZE['borderWidth']
-    boxLeft.cornerRadius = SIZE['cornerRadius']
-
-    // 中间电量
-    // 根据电量，计算电量矩形的长（总长80-边距10）
-    // 算法：70/100 * 电量
-    const BATTERY_WIDTH = parseInt((SIZE['width'] - (SIZE['spacer']*2)) / 100 * num)
-    boxLeft.addSpacer(SIZE['spacer'])
-    boxLeft.setPadding(SIZE['spacer'], 0, SIZE['spacer'], 0)
-    const boxCenter = boxLeft.addStack()
-    boxCenter.backgroundColor = color
-    boxCenter.size = new Size(BATTERY_WIDTH, SIZE['height'] - SIZE['spacer']*2)
-    boxCenter.cornerRadius = SIZE['cornerRadius'] / 2
-
-    boxLeft.addSpacer((SIZE['width'] - SIZE['spacer']*2) - BATTERY_WIDTH + SIZE['spacer'])
-
-    box.addSpacer(2)
-
-    const boxRight = box.addStack()
-    boxRight.backgroundColor = new Color('#CCCCCC', 0.8)
-    boxRight.cornerRadius = 5
-    boxRight.size = new Size(SIZE['rightWidth'], SIZE['rightHeight'])
-
-    return box
-  }
-
   // 提示配置
   async renderConfigure () {
     const w = new ListWidget()
-    w.addText("请点击组件进行设置信息")
+    w.addText("请点击组件设置Cookie")
     w.url = this.actionUrl("settings")
     return w
   }
 
-  // 获取电量值
-  getPricNum () {
-    // 电量
-    // 男：75，女：78（预计寿命
-    const SM = this.settings['gender'] === '男' ? 75 : 78
-    // 1. 已经过了多少天
-    const DAY_TO_NOW = Math.floor((+new Date() - (+new Date(this.settings['date']))) / (24*60*60*1000))
-    // 2. 百分比
-    const PRIC_NUM = parseFloat(1-(DAY_TO_NOW / (75*365))).toFixed(2) * 100
-
-    return PRIC_NUM
-  }
 
   /**
    * 渲染小尺寸组件
@@ -142,32 +64,8 @@ class Widget extends Base {
     // 名称
     await this.renderHeader(w, this.logo, this.name, this.BG_FILE ? Color.white() : null)
 
-
-    const PRIC_NUM = this.getPricNum()
-
-    const battery = w.addStack()
-    battery.addSpacer()
-    await this.renderBattery(battery, PRIC_NUM)
-    battery.addSpacer()
-    w.addSpacer(5)
-
-    const num = w.addText(` ${PRIC_NUM} %`)
-    num.centerAlignText()
-    num.font = Font.systemFont(36)
-
-
-    // 生日
-    w.addSpacer()
-    const _date = new DateFormatter()
-    _date.dateFormat = "yyyy/MM/dd"
-    const date = w.addText(this.settings['name'] + ' @ ' + _date.string(new Date(this.settings['date'])))
-    date.font = Font.lightSystemFont(10)
-    date.textOpacity = 0.8
-    date.centerAlignText()
-
     if (this.BG_FILE) {
       w.backgroundImage = this.BG_FILE
-      num.textColor = date.textColor = Color.white()
     }
 
     w.url = this.actionUrl("settings")
@@ -178,47 +76,7 @@ class Widget extends Base {
    * 渲染中尺寸组件
    */
   async renderMedium () {
-    let w = new ListWidget()
-    await this.renderHeader(w, this.logo, this.name, this.BG_FILE ? Color.white() : null)
-    w.addSpacer()
-
-    const name = w.addText(this.settings['name'])
-    name.centerAlignText()
-    name.font = Font.systemFont(14)
-    name.textOpacity = 0.8
-    w.addSpacer(10)
-
-    const box = w.addStack()
-    box.centerAlignContent()
-    box.addSpacer()
-    // 中间电量
-    const PRIC_NUM = this.getPricNum()
-    const num = box.addText(`${PRIC_NUM} %`)
-    num.font = Font.boldSystemFont(34)
-
-    box.addSpacer(10)
-
-    await this.renderBattery(box, PRIC_NUM, 'medium')
-
-    box.addSpacer()
-    w.addSpacer()
-
-    w.addSpacer(5)
-
-    const _date = new DateFormatter()
-    _date.dateFormat = "yyyy / MM / dd"
-    const date = w.addText(_date.string(new Date(this.settings['date'])))
-    date.font = Font.lightSystemFont(12)
-    date.textOpacity = 0.8
-    date.rightAlignText()
-
-    if (this.BG_FILE) {
-      w.backgroundImage = this.BG_FILE
-      name.textColor = num.textColor = date.textColor = Color.white()
-    }
-
-    w.url = this.actionUrl("settings")
-    return w
+    return false
   }
   /**
    * 渲染大尺寸组件
@@ -244,19 +102,13 @@ class Widget extends Base {
 
   async actionSettings () {
     const a = new Alert()
-    a.title = "设置信息"
-    a.message = "配置您的信息，以便小组件进行计算展示"
+    a.title = "更新缓存"
+    a.message = "请填写Cookie获取流量详情"
     
-    const menus = ['输入名称', '选择生日', '选择性别'];
+    const menus = ['输入Cookie'];
     ;[{
-      name:'name',
-      text: '输入名称'
-    }, {
-      name: 'date',
-      text: '选择生日'
-    }, {
-      name: 'gender',
-      text: '选择性别'
+      name:'cookie',
+      text: '输入Cookie'
     }].map(item => {
       a.addAction((this.settings[item.name] ? '✅ ' : '❌ ') + item.text)
     })
@@ -270,9 +122,9 @@ class Widget extends Base {
   // 设置名称
   async actionSettings0 () {
     const a = new Alert()
-    a.title = "输入名称"
-    a.message = "请输入小组件显示的用户名称"
-    a.addTextField("名称", this.settings['name'])
+    a.title = "输入Cookie"
+    a.message = "请填写Cookie获取流量详情"
+    a.addTextField("联通Cookie", this.settings['cookie'])
     a.addAction("确定")
     a.addCancelAction("取消")
 
@@ -281,47 +133,12 @@ class Widget extends Base {
     const n = a.textFieldValue(0)
     if (!n) return await this.actionSettings0()
 
-    this.settings['name'] = n
+    this.settings['cookie'] = n
     this.saveSettings()
 
     return await this.actionSettings()
   }
 
-  // 选择生日
-  async actionSettings1 () {
-    const dp = new DatePicker()
-    if (this.settings['date']) {
-      dp.initialDate = new Date(this.settings['date'])
-    }
-    let date
-    try {
-      date = await dp.pickDate()
-    } catch (e) {
-      return await this.actionSettings()
-    }
-    this.settings['date'] = date
-    this.saveSettings()
-
-    return await this.actionSettings()
-  }
-
-  // 选择性别
-  async actionSettings2 () {
-    const a = new Alert()
-    a.title = "选择性别"
-    a.message = "性别可用于预计寿命"
-    const genders = ['男', '女']
-    genders.map(n => {
-      a.addAction((this.settings['gender'] === n ? '✅ ' : '') + n)
-    })
-    a.addCancelAction('取消选择')
-    const i = await a.presentSheet()
-    if (i !== -1) {
-      this.settings['gender'] = genders[i]
-      this.saveSettings()
-    }
-    return await this.actionSettings()
-  }
 
   // 透明背景
   async actionSettings3 () {
