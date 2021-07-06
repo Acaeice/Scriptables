@@ -19,11 +19,11 @@ class Widget extends Base {
    */
   constructor (arg) {
     super(arg)
-    this.name = '就跳一点'
+    this.name = '联通'
     this.desc = '联通流量监控'
     this.logo = 'https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/liuliang.png?OSSAccessKeyId=LTAI5tBcn1GoDktEP1VYrdbt&Expires=1625592727&Signature=Nb5hhd0C5emJp7iPwFQKouiJvE0%3D'
-
-    this.registerAction("更新缓存", this.actionSettings)
+    this.logo
+    this.registerAction("监控配置", this.actionSettings)
     this.registerAction("透明背景", this.actionSettings3)
     this.BG_FILE = this.getBackgroundImage()
     if (this.BG_FILE) this.registerAction("移除背景", this.actionSettings4)
@@ -34,6 +34,7 @@ class Widget extends Base {
    * 可以根据 this.widgetFamily 来判断小组件尺寸，以返回不同大小的内容
    */
    async render () {
+    const data = await this.getData()
     if (!this.settings || !this.settings['cookie']) {
       return await this.renderConfigure()
     }
@@ -43,7 +44,7 @@ class Widget extends Base {
       case 'medium':
         return await this.renderMedium()
       default:
-        return await this.renderSmall()
+        return await this.renderSmall(data)
     }
   }
 
@@ -59,11 +60,26 @@ class Widget extends Base {
   /**
    * 渲染小尺寸组件
    */
-  async renderSmall () {
+  async renderSmall (data) {
     let w = new ListWidget()
     // 名称
-    await this.renderHeader(w, this.logo, this.name, this.BG_FILE ? Color.white() : null)
-
+    // await this.renderHeader(w, this.logo, this.name, this.BG_FILE ? Color.white() : null)
+    w.addSpacer(10)
+    let header = w.addStack()
+    header.centerAlignContent()
+    let _icon = header.addImage(await this.getImageByUrl(this.logo))
+    _icon.imageSize = new Size(24, 24)
+    _icon.cornerRadius = 4
+    header.addSpacer(10)
+    let _title = header.addText(this.name)
+    _title.textColor = Color.white()
+    _title.textOpacity = 0.6
+    _title.font = Font.boldSystemFont(12)
+    w.addSpacer(10)
+    const liveUse = Keychain.get("live")
+    const t = w.addText(liveUse)
+    t.font = Font.lightSystemFont(16)
+    
     if (this.BG_FILE) {
       w.backgroundImage = this.BG_FILE
     }
@@ -89,8 +105,19 @@ class Widget extends Base {
    * 获取数据函数，函数名可不固定
    */
   async getData () {
-    return false
-  }
+    const req = new Request("https://m.client.10010.com/servicequerybusiness/operationservice/queryOcsPackageFlowLeftContent")
+    req.method = "POST"
+    req.headers = {
+      "Cookie": this.settings['cookie']
+    }
+    const res = await req.loadJSON()
+    const current = res.resources[0].details[1].use*1024
+    console.log(current);
+    const liveuse = Keychain.get("live")*1024
+    const resdata = current - 5401743.26
+    console.log(resdata/1024);
+    return current
+}
 
   /**
    * 自定义注册点击事件，用 actionUrl 生成一个触发链接，点击后会执行下方对应的 action
@@ -102,15 +129,18 @@ class Widget extends Base {
 
   async actionSettings () {
     const a = new Alert()
-    a.title = "更新缓存"
-    a.message = "请填写Cookie获取流量详情"
+    a.title = "配置流量监控"
+    a.message = "请先配置饼干后再更新缓存"
     
-    const menus = ['输入Cookie'];
+    const menus = ['Cookie','更新缓存'];
     ;[{
       name:'cookie',
-      text: '输入Cookie'
+      text:'配置饼干'
+    },{
+      name:'cache',
+      text:"更新缓存"
     }].map(item => {
-      a.addAction((this.settings[item.name] ? '✅ ' : '❌ ') + item.text)
+      a.addAction((this.settings[item.name] ? ' ✅ ' : '❎ ') + item.text)
     })
 
     a.addCancelAction('取消设置')
@@ -119,11 +149,11 @@ class Widget extends Base {
     await this['actionSettings' + id]()
   }
 
-  // 设置名称
+  // 配置Cookie
   async actionSettings0 () {
     const a = new Alert()
-    a.title = "输入Cookie"
-    a.message = "请填写Cookie获取流量详情"
+    a.title = "Cookie"
+    a.message = "请填写Cookie获取流量使用详情"
     a.addTextField("联通Cookie", this.settings['cookie'])
     a.addAction("确定")
     a.addCancelAction("取消")
@@ -136,6 +166,30 @@ class Widget extends Base {
     this.settings['cookie'] = n
     this.saveSettings()
 
+    return await this.actionSettings()
+  }
+
+  
+  // 更新缓存
+  async actionSettings1 () {
+    const cacheKey = "live"
+    const a = new Alert()
+    a.title = "更新缓存将重新计算跳点"
+    a.addAction("更新")
+    const use = Keychain.get(cacheKey)
+    a.addCancelAction("取消")
+      
+    const id = await a.presentSheet()
+    if (id === -1) return await this.actionSettings()
+    const req = new Request("https://m.client.10010.com/servicequerybusiness/operationservice/queryOcsPackageFlowLeftContent")
+    req.method = "POST"
+    req.headers = {
+      "Cookie": this.settings['cookie']
+    }
+    const res = await req.loadJSON()
+    Keychain.set(cacheKey,res.resources[0].details[1].use+"MB")
+    this.settings['cache'] = 1
+    this.saveSettings()
     return await this.actionSettings()
   }
 
