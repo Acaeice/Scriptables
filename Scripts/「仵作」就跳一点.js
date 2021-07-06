@@ -1,6 +1,6 @@
 // Variables used by Scriptable.
 // These must be at the very top of the file. Do not edit.
-// icon-color: darkgreen; icon-glyph: hand-lizar;
+// icon-color: deep-green; icon-glyph: hand-lizard;
 // 
 // iOS 桌面组件脚本 @「小件件」
 // 开发说明：请从 Widget 类开始编写，注释请勿修改
@@ -19,9 +19,9 @@ class Widget extends Base {
    */
   constructor (arg) {
     super(arg)
-    this.name = '人生电量'
-    this.desc = '预计一下余生还剩多少电量'
-    this.logo = 'https://txc.gtimg.com/data/287371/2020/1105/a8d2e9e19644b244b7a2307bdf2609c0.png'
+    this.name = '就跳一点'
+    this.desc = '联通流量监控'
+    this.logo = 'https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/liuliang.png?OSSAccessKeyId=LTAI5tBcn1GoDktEP1VYrdbt&Expires=1625592727&Signature=Nb5hhd0C5emJp7iPwFQKouiJvE0%3D'
 
     this.registerAction("设置信息", this.actionSettings)
     this.registerAction("透明背景", this.actionSettings3)
