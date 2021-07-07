@@ -35,7 +35,8 @@ class Base {
     // 本地，用于存储图片等
     this.FILE_MGR_LOCAL = FileManager.local()
     this.BACKGROUND_KEY = this.FILE_MGR_LOCAL.joinPath(this.FILE_MGR_LOCAL.documentsDirectory(), `bg_${this.SETTING_KEY}.jpg`)
-    // this.BACKGROUND_KEY1 = this.FILE_MGR_LOCAL.joinPath(this.FILE_MGR_LOCAL.documentsDirectory(), `bg_${this.SETTING_KEY1}.jpg`)
+    this.FILE_MGR_ICLOUD = FileManager.iCloud()
+    this.BACKGROUND_KEY1 = this.FILE_MGR_LOCAL.writeImage(this.FILE_MGR_ICLOUD.documentsDirectory(),"https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/no-bg-mfk.09b13864.png?OSSAccessKeyId=LTAI5tFGDfkLhGjULuvqVp3P&Expires=1625640136&Signature=J%2F1wlqllRJc0nPpCZ2Fhcn%2BPsm4%3D")
     // this.BACKGROUND_KEY2 = this.FILE_MGR_LOCAL.joinPath(this.FILE_MGR_LOCAL.documentsDirectory(), `bg_${this.SETTING_KEY2}.jpg`)
     // // 插件设置
     this.settings = this.getSettings()
@@ -691,6 +692,7 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
       // 设置背景
       // 全部设置一遍，
       this.FILE_MGR_LOCAL.writeImage(this.BACKGROUND_KEY, img)
+
       // this.FILE_MGR_LOCAL.writeImage(this.BACKGROUND_KEY1, img)
       // this.FILE_MGR_LOCAL.writeImage(this.BACKGROUND_KEY2, img)
       if (notify) this.notify("设置成功", "小组件背景图片已设置！稍后刷新生效")
