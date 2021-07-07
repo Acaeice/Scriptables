@@ -41,7 +41,7 @@ class Widget extends Base {
       case 'large':
         return await this.renderLarge()
       case 'medium':
-        return await this.renderMedium()
+        return await this.renderMedium(data)
       default:
         return await this.renderSmall(data)
     }
@@ -90,32 +90,18 @@ class Widget extends Base {
   /**
    * 渲染中尺寸组件
    */
-  async renderMedium () {
-    const img = await this.getImageByUrl("https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/no-bg-mfk.09b13864.png?OSSAccessKeyId=LTAI5tFGDfkLhGjULuvqVp3P&Expires=1625640136&Signature=J%2F1wlqllRJc0nPpCZ2Fhcn%2BPsm4%3D",true)
+  async renderMedium (data) {
+    const img = await this.getImageByUrl("https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/xiu.png?OSSAccessKeyId=LTAI5tFGDfkLhGjULuvqVp3P&Expires=1625687916&Signature=PkQfoj%2BEMGLpp%2BxEbxXD8FDn0sU%3D")
     if (!img) return
-    this.setBackgroundImage(img)
-    w.addSpacer(10)
-    let header = w.addStack()
-    header.centerAlignContent()
-    let _icon = header.addImage(await this.getImageByUrl(this.logo))
-    _icon.imageSize = new Size(24, 24)
-    _icon.cornerRadius = 4
-    header.addSpacer(10)
-    let _title = header.addText(this.name)
-    _title.textColor = Color.white()
-    _title.textOpacity = 0.6
-    _title.font = Font.boldSystemFont(12)
-    w.addSpacer(10)
-    const liveUse = Keychain.get("live")
-    const t = w.addText(liveUse)
-    t.font = Font.lightSystemFont(16)
-    
-    if (this.BG_FILE) {
-      w.backgroundImage = this.BG_FILE
-    }
-
-    w.url = this.actionUrl("settings")
-
+    console.log(img);
+    let w = new ListWidget()
+    w.backgroundImage = img
+    // await this.renderHeader(w, this.logo, this.name)
+    // const liveUse = Keychain.get("live")
+    // const t = w.addText(liveUse)
+    // t.font = Font.lightSystemFont(16)
+    // w.addText("🔋："+(Device.isCharging()?"充电中":"未充电"))
+    // w.addSpacer()
     return w
   }
   /**
