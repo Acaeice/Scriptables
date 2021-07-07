@@ -22,7 +22,6 @@ class Widget extends Base {
     this.name = '联通'
     this.desc = '联通流量监控'
     this.logo = 'https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/liuliang.png?OSSAccessKeyId=LTAI5tBcn1GoDktEP1VYrdbt&Expires=1625592727&Signature=Nb5hhd0C5emJp7iPwFQKouiJvE0%3D'
-    this.logo
     this.registerAction("监控配置", this.actionSettings)
     this.registerAction("透明背景", this.actionSettings3)
     this.BG_FILE = this.getBackgroundImage()
@@ -92,7 +91,32 @@ class Widget extends Base {
    * 渲染中尺寸组件
    */
   async renderMedium () {
-    return false
+    const img = await this.getImageByUrl("https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/no-bg-mfk.09b13864.png?OSSAccessKeyId=LTAI5tFGDfkLhGjULuvqVp3P&Expires=1625640136&Signature=J%2F1wlqllRJc0nPpCZ2Fhcn%2BPsm4%3D",true)
+    if (!img) return
+    this.setBackgroundImage(img)
+    w.addSpacer(10)
+    let header = w.addStack()
+    header.centerAlignContent()
+    let _icon = header.addImage(await this.getImageByUrl(this.logo))
+    _icon.imageSize = new Size(24, 24)
+    _icon.cornerRadius = 4
+    header.addSpacer(10)
+    let _title = header.addText(this.name)
+    _title.textColor = Color.white()
+    _title.textOpacity = 0.6
+    _title.font = Font.boldSystemFont(12)
+    w.addSpacer(10)
+    const liveUse = Keychain.get("live")
+    const t = w.addText(liveUse)
+    t.font = Font.lightSystemFont(16)
+    
+    if (this.BG_FILE) {
+      w.backgroundImage = this.BG_FILE
+    }
+
+    w.url = this.actionUrl("settings")
+
+    return w
   }
   /**
    * 渲染大尺寸组件
