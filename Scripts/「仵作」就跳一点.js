@@ -72,35 +72,56 @@ class Widget extends Base {
     let w = new ListWidget()
     let fm = FileManager.iCloud()
     let path = fm.documentsDirectory() + "/IMG_2280.JPG"
-    console.log(path);
     w.backgroundImage = fm.readImage(path)
-
-    const box = w.addStack()
+    let date = new Date();
+    let newdate = date.toLocaleString('chinese', { hour12: false });
+    let timenow = newdate.replace(/\//g, '-')
+    
+    const maxbox = w.addStack()
+    maxbox.layoutVertically()
+    maxbox.addSpacer()
+    
+    const box = maxbox.addStack()
     box.layoutHorizontally()
-    box.centerAlignContent()
 
     const flowpngbox = box.addStack()
     let flowPNG = flowpngbox.addImage(await this.getImageByUrl(this.logo))
     flowPNG.imageSize = new Size(100, 100)
     flowpngbox.addSpacer(14)
-    flowpngbox.borderWidth = 1
-    flowpngbox.borderColor = new Color("6dce3c", 1)
+    // flowpngbox.borderWidth = 1
+    // flowpngbox.borderColor = new Color("6dce3c", 1)
 
     const totalbox = box.addStack()
-    totalbox.borderWidth = 1
-    totalbox.borderColor = new Color("6dce3c", 1)
+    // totalbox.borderWidth = 1
+    // totalbox.borderColor = new Color("6dce3c", 1)
     totalbox.size = new Size(180, 100)
     totalbox.layoutVertically()
-    let total = totalbox.addText("本月合计：")
-    let free = totalbox.addText("本月以免：")
-    let jump = totalbox.addText("只跳一点：")
-    let arr = new Array(total,free,jump)
+    // let total = totalbox.addText("本月合计：")
+    // let free = totalbox.addText("本月以免：")
+    // let jump = totalbox.addText("只跳一点：")
+    let arr = new Array("本月合计：", "本月以免：", "只跳一点：")
+    let arr2 = new Array("201MB", "200MB", "1MB")
     arr.map((d, i) => {
-      d.textColor = new Color("#262626",1)
-      d.font = Font.lightSystemFont(13)
-      let a = total.text += i+1
+      // if(i==0){
+      //   totalbox.addText("1")
+      // }
+
+      let _title = d
+      const cell_text = totalbox.addText(_title)
+      cell_text.font = Font.lightSystemFont(13)
+      cell_text.textColor = new Color("000000", 1)
+      cell_text.lineLimit = 1
+      if (i == 0 || i == 1) {
+        totalbox.addSpacer(8)
+      }
     })
+    const gettimenow = maxbox.addStack()
+    let timeText = gettimenow.addText("查询时间："+timenow)
+    timeText.font = Font.lightSystemFont(12)
+    timeText.textColor = new Color("959595", 1)
     
+    // gettimenow.borderWidth = 1
+    // gettimenow.borderColor = new Color("6dce3c", 1)
     return w
   }
   /**
@@ -114,18 +135,18 @@ class Widget extends Base {
    * 获取数据函数，函数名可不固定
    */
   async getData() {
-    const req = new Request("https://m.client.10010.com/servicequerybusiness/operationservice/queryOcsPackageFlowLeftContent")
-    req.method = "POST"
-    req.headers = {
-      "Cookie": this.settings['cookie']
-    }
-    const res = await req.loadJSON()
-    const current = res.resources[0].details[1].use * 1024
-    console.log(current);
-    const liveuse = Keychain.get("live") * 1024
-    const resdata = current - 5401743.26
-    console.log(resdata / 1024);
-    return current
+    // const req = new Request("https://m.client.10010.com/servicequerybusiness/operationservice/queryOcsPackageFlowLeftContent")
+    // req.method = "POST"
+    // req.headers = {
+    //   "Cookie": this.settings['cookie']
+    // }
+    // const res = await req.loadJSON()
+    // const current = res.resources[0].details[1].use * 1024
+    // console.log(current);
+    // const liveuse = Keychain.get("live") * 1024
+    // const resdata = current - 5401743.26
+    // console.log(resdata / 1024);
+    // return current
   }
 
   /**
