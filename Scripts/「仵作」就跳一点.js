@@ -76,11 +76,18 @@ class Widget extends Base {
     let date = new Date();
     let newdate = date.toLocaleString('chinese', { hour12: false });
     let timenow = newdate.replace(/\//g, '-')
-    
+
     const maxbox = w.addStack()
     maxbox.layoutVertically()
-    maxbox.addSpacer()
-    
+
+
+    const gettimenow = maxbox.addStack()
+    let timeText = gettimenow.addText("查询时间：" + timenow)
+    timeText.font = Font.lightSystemFont(12)
+    timeText.textColor = new Color("959595", 1)
+    gettimenow.borderWidth = 1
+    gettimenow.borderColor = new Color("6dce3c", 1)
+
     const box = maxbox.addStack()
     box.layoutHorizontally()
 
@@ -88,40 +95,45 @@ class Widget extends Base {
     let flowPNG = flowpngbox.addImage(await this.getImageByUrl(this.logo))
     flowPNG.imageSize = new Size(100, 100)
     flowpngbox.addSpacer(14)
-    // flowpngbox.borderWidth = 1
-    // flowpngbox.borderColor = new Color("6dce3c", 1)
+    flowpngbox.borderWidth = 1
+    flowpngbox.borderColor = new Color("6dce3c", 1)
 
     const totalbox = box.addStack()
-    // totalbox.borderWidth = 1
-    // totalbox.borderColor = new Color("6dce3c", 1)
+    totalbox.borderWidth = 1
+    totalbox.borderColor = new Color("6dce3c", 1)
     totalbox.size = new Size(180, 100)
-    totalbox.layoutVertically()
-    // let total = totalbox.addText("本月合计：")
-    // let free = totalbox.addText("本月以免：")
-    // let jump = totalbox.addText("只跳一点：")
-    let arr = new Array("本月合计：", "本月以免：", "只跳一点：")
-    let arr2 = new Array("201MB", "200MB", "1MB")
-    arr.map((d, i) => {
-      // if(i==0){
-      //   totalbox.addText("1")
-      // }
+    totalbox
 
+    let arr = new Array("当前套餐：", "本月合计：", "本月以免：", "跳了一点：")
+    let arr2 = new Array("米粉卡（5元卡）", "201", "200", "1")
+
+    const text = totalbox.addStack()
+
+    text.layoutVertically()
+    arr.map(async (d, i) => {
+      const cell = text.addStack()
       let _title = d
-      const cell_text = totalbox.addText(_title)
-      cell_text.font = Font.lightSystemFont(13)
-      cell_text.textColor = new Color("000000", 1)
+      const cell_text = cell.addText(_title)
+      cell_text.font = Font.thinMonospacedSystemFont(13)
       cell_text.lineLimit = 1
-      if (i == 0 || i == 1) {
-        totalbox.addSpacer(8)
+
+      const idx = cell.addText(arr2[i])
+      idx.font = Font.systemFont(12)
+      if (i === 0) {
+        idx.textColor = new Color('#fe2d46', 1)
+      } else if (i === 1) {
+        idx.textColor = new Color('#ff6600', 1)
+      } else if (i === 2) {
+        idx.textColor = new Color('#faa90e', 1)
+        if(3>2){
+          cell.addImage(await this.getImageByUrl("https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/risk.png?OSSAccessKeyId=LTAI5tFGDfkLhGjULuvqVp3P&Expires=1626185519&Signature=D4X%2FRKaKOeyu5TsOeSHyybbxspU%3D"))
+        }
+      } else if (i == 3) {
+        idx.textColor = new Color('#9195a3', 1)
       }
+      cell.addSpacer()
+      text.addSpacer(10)
     })
-    const gettimenow = maxbox.addStack()
-    let timeText = gettimenow.addText("查询时间："+timenow)
-    timeText.font = Font.lightSystemFont(12)
-    timeText.textColor = new Color("959595", 1)
-    
-    // gettimenow.borderWidth = 1
-    // gettimenow.borderColor = new Color("6dce3c", 1)
     return w
   }
   /**
@@ -238,6 +250,6 @@ class Widget extends Base {
 
 }
 // @组件代码结束
-
+const newFont = new Font("Courier", 12)
 const { Testing } = require("./「小件件」开发环境")
 await Testing(Widget)
