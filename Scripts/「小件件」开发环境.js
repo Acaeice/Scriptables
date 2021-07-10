@@ -21,22 +21,22 @@ class Base {
     init(widgetFamily = config.widgetFamily) {
         // 组件大小：small,medium,large
         this.widgetFamily = widgetFamily
-            // 系统设置的key，这里分为三个类型：
-            // 1. 全局
-            // 2. 不同尺寸的小组件
-            // 3. 不同尺寸+小组件自定义的参数
-            // 当没有key2时，获取key1，没有key1获取全局key的设置
-            // this.SETTING_KEY = this.md5(Script.name()+'@'+this.widgetFamily+"@"+this.arg)
-            // this.SETTING_KEY1 = this.md5(Script.name()+'@'+this.widgetFamily)
+        // 系统设置的key，这里分为三个类型：
+        // 1. 全局
+        // 2. 不同尺寸的小组件
+        // 3. 不同尺寸+小组件自定义的参数
+        // 当没有key2时，获取key1，没有key1获取全局key的设置
+        // this.SETTING_KEY = this.md5(Script.name()+'@'+this.widgetFamily+"@"+this.arg)
+        // this.SETTING_KEY1 = this.md5(Script.name()+'@'+this.widgetFamily)
         this.SETTING_KEY = this.md5(Script.name())
-            // 文件管理器
-            // 提示：缓存数据不要用这个操作，这个是操作源码目录的，缓存建议存放在local temp目录中
+        // 文件管理器
+        // 提示：缓存数据不要用这个操作，这个是操作源码目录的，缓存建议存放在local temp目录中
         this.FILE_MGR = FileManager[module.filename.includes('Documents/iCloud~') ? 'iCloud' : 'local']()
-            // 本地，用于存储图片等
+        // 本地，用于存储图片等
         this.FILE_MGR_LOCAL = FileManager.local()
         this.BACKGROUND_KEY = this.FILE_MGR_LOCAL.joinPath(this.FILE_MGR_LOCAL.documentsDirectory(), `bg_${this.SETTING_KEY}.jpg`)
-            // this.BACKGROUND_KEY2 = this.FILE_MGR_LOCAL.joinPath(this.FILE_MGR_LOCAL.documentsDirectory(), `bg_${this.SETTING_KEY2}.jpg`)
-            // // 插件设置
+        // this.BACKGROUND_KEY2 = this.FILE_MGR_LOCAL.joinPath(this.FILE_MGR_LOCAL.documentsDirectory(), `bg_${this.SETTING_KEY2}.jpg`)
+        // // 插件设置
         this.settings = this.getSettings()
     }
 
@@ -119,7 +119,7 @@ class Base {
         function o(n) { return a(i(h(t = r(n)), 8 * t.length)); var t }
 
         function u(n, t) {
-            return function(n, t) {
+            return function (n, t) {
                 var r, e, o = h(n),
                     u = [],
                     c = [];
@@ -150,7 +150,7 @@ class Base {
         try {
             let req = new Request(url)
             data = await (json ? req.loadJSON() : req.loadString())
-        } catch (e) {}
+        } catch (e) { }
         // 判断数据是否为空（加载失败）
         if (!data && Keychain.contains(cacheKey)) {
             // 判断是否有缓存
@@ -162,7 +162,7 @@ class Base {
         return data
     }
 
-    async httpPost(url, data) {}
+    async httpPost(url, data) { }
 
     /**
      * 获取远程图片内容
@@ -172,14 +172,14 @@ class Base {
     async getImageByUrl(url, useCache = true) {
         const cacheKey = this.md5(url)
         const cacheFile = FileManager.local().joinPath(FileManager.local().temporaryDirectory(), cacheKey)
-            // 判断是否有缓存
+        // 判断是否有缓存
         if (useCache && FileManager.local().fileExists(cacheFile)) {
             return Image.fromFile(cacheFile)
         }
         try {
             const req = new Request(url)
             const img = await req.loadImage()
-                // 存储到缓存
+            // 存储到缓存
             FileManager.local().writeImage(cacheFile, img)
             return img
         } catch (e) {
@@ -238,7 +238,7 @@ class Base {
             }
             res = await req.loadJSON()
         } catch (error) {}
-
+        console.log(res)
         return res
     }
 
@@ -254,7 +254,6 @@ class Base {
         }
         if (!fm.fileExists(fm.documentsDirectory() + filepath)) {
             fm.writeImage(fm.documentsDirectory() + filepath, await this.getImageByUrl(`https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/${filepath.match(/\/([^/]*)$/)[1]}`))
-            console.log("___________下载成功" + filepath);
             if (!fm.isFileDownloaded(fm.documentsDirectory() + filepath)) {
                 fm.downloadFileFromiCloud(fm.documentsDirectory() + filepath)
             }
@@ -467,7 +466,7 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
 
             // Convert to image and crop before returning.
             let imageFromData = Image.fromData(imageData)
-                // return cropImage(imageFromData)
+            // return cropImage(imageFromData)
             return imageFromData
         }
 
@@ -692,7 +691,7 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
      */
     async shadowImage(img, color = '#000000', opacity = 0.7) {
         let ctx = new DrawContext()
-            // 获取图片的尺寸
+        // 获取图片的尺寸
         ctx.size = img.size
 
         ctx.drawImageInRect(img, new Rect(0, 0, img.size['width'], img.size['height']))
@@ -710,20 +709,20 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
     getSettings(json = true) {
         let res = json ? {} : ""
         let cache = ""
-            // if (global && Keychain.contains(this.SETTING_KEY2)) {
-            //   cache = Keychain.get(this.SETTING_KEY2)
-            // } else if (Keychain.contains(this.SETTING_KEY)) {
-            //   cache = Keychain.get(this.SETTING_KEY)
-            // } else if (Keychain.contains(this.SETTING_KEY1)) {
-            //   cache = Keychain.get(this.SETTING_KEY1)
-            // } else if (Keychain.contains(this.SETTING_KEY2)){
+        // if (global && Keychain.contains(this.SETTING_KEY2)) {
+        //   cache = Keychain.get(this.SETTING_KEY2)
+        // } else if (Keychain.contains(this.SETTING_KEY)) {
+        //   cache = Keychain.get(this.SETTING_KEY)
+        // } else if (Keychain.contains(this.SETTING_KEY1)) {
+        //   cache = Keychain.get(this.SETTING_KEY1)
+        // } else if (Keychain.contains(this.SETTING_KEY2)){
         if (Keychain.contains(this.SETTING_KEY)) {
             cache = Keychain.get(this.SETTING_KEY)
         }
         if (json) {
             try {
                 res = JSON.parse(cache)
-            } catch (e) {}
+            } catch (e) { }
         } else {
             res = cache
         }
@@ -751,10 +750,10 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
         let result = null
         if (this.FILE_MGR_LOCAL.fileExists(this.BACKGROUND_KEY)) {
             result = Image.fromFile(this.BACKGROUND_KEY)
-                // } else if (this.FILE_MGR_LOCAL.fileExists(this.BACKGROUND_KEY1)) {
-                //   result = Image.fromFile(this.BACKGROUND_KEY1)
-                // } else if (this.FILE_MGR_LOCAL.fileExists(this.BACKGROUND_KEY2)) {
-                //   result = Image.fromFile(this.BACKGROUND_KEY2)
+            // } else if (this.FILE_MGR_LOCAL.fileExists(this.BACKGROUND_KEY1)) {
+            //   result = Image.fromFile(this.BACKGROUND_KEY1)
+            // } else if (this.FILE_MGR_LOCAL.fileExists(this.BACKGROUND_KEY2)) {
+            //   result = Image.fromFile(this.BACKGROUND_KEY2)
         }
         return result
     }
@@ -768,10 +767,10 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
             // 移除背景
             if (this.FILE_MGR_LOCAL.fileExists(this.BACKGROUND_KEY)) {
                 this.FILE_MGR_LOCAL.remove(this.BACKGROUND_KEY)
-                    // } else if (this.FILE_MGR_LOCAL.fileExists(this.BACKGROUND_KEY1)) {
-                    //   this.FILE_MGR_LOCAL.remove(this.BACKGROUND_KEY1)
-                    // } else if (this.FILE_MGR_LOCAL.fileExists(this.BACKGROUND_KEY2)) {
-                    //   this.FILE_MGR_LOCAL.remove(this.BACKGROUND_KEY2)
+                // } else if (this.FILE_MGR_LOCAL.fileExists(this.BACKGROUND_KEY1)) {
+                //   this.FILE_MGR_LOCAL.remove(this.BACKGROUND_KEY1)
+                // } else if (this.FILE_MGR_LOCAL.fileExists(this.BACKGROUND_KEY2)) {
+                //   this.FILE_MGR_LOCAL.remove(this.BACKGROUND_KEY2)
             }
             if (notify) this.notify("移除成功", "小组件背景图片已移除，稍后刷新生效")
         } else {
@@ -789,56 +788,56 @@ var mul_table=[512,512,456,512,328,456,335,512,405,328,271,456,388,335,292,512,4
 // @base.end
 // 运行环境
 // @running.start
-const Running = async(Widget, default_args = "") => {
-        let M = null
-            // 判断hash是否和当前设备匹配
-        if (config.runsInWidget) {
-            M = new Widget(args.widgetParameter || '')
-            const W = await M.render()
-            Script.setWidget(W)
-            Script.complete()
-        } else {
-            let { act, data, __arg, __size } = args.queryParameters
-            M = new Widget(__arg || default_args || '')
-            if (__size) M.init(__size)
-            if (!act || !M['_actions']) {
-                // 弹出选择菜单
-                const actions = M['_actions']
-                const _actions = [
-                    async() => {
-                        Safari.openInApp("https://support.qq.com/products/287371", false)
-                    }
-                ]
-                const alert = new Alert()
-                alert.title = M.name
-                alert.message = M.desc
-                alert.addAction("反馈交流")
-                for (let _ in actions) {
-                    alert.addAction(_)
-                    _actions.push(actions[_])
+const Running = async (Widget, default_args = "") => {
+    let M = null
+    // 判断hash是否和当前设备匹配
+    if (config.runsInWidget) {
+        M = new Widget(args.widgetParameter || '')
+        const W = await M.render()
+        Script.setWidget(W)
+        Script.complete()
+    } else {
+        let { act, data, __arg, __size } = args.queryParameters
+        M = new Widget(__arg || default_args || '')
+        if (__size) M.init(__size)
+        if (!act || !M['_actions']) {
+            // 弹出选择菜单
+            const actions = M['_actions']
+            const _actions = [
+                async () => {
+                    Safari.openInApp("https://support.qq.com/products/287371", false)
                 }
-                alert.addCancelAction("取消操作")
-                const idx = await alert.presentSheet()
-                if (_actions[idx]) {
-                    const func = _actions[idx]
-                    await func()
-                }
-                return
+            ]
+            const alert = new Alert()
+            alert.title = M.name
+            alert.message = M.desc
+            alert.addAction("反馈交流")
+            for (let _ in actions) {
+                alert.addAction(_)
+                _actions.push(actions[_])
             }
-            let _tmp = act.split('-').map(_ => _[0].toUpperCase() + _.substr(1)).join('')
-            let _act = `action${_tmp}`
-            if (M[_act] && typeof M[_act] === 'function') {
-                const func = M[_act].bind(M)
-                await func(data)
+            alert.addCancelAction("取消操作")
+            const idx = await alert.presentSheet()
+            if (_actions[idx]) {
+                const func = _actions[idx]
+                await func()
             }
+            return
+        }
+        let _tmp = act.split('-').map(_ => _[0].toUpperCase() + _.substr(1)).join('')
+        let _act = `action${_tmp}`
+        if (M[_act] && typeof M[_act] === 'function') {
+            const func = M[_act].bind(M)
+            await func(data)
         }
     }
-    // @running.end
+}
+// @running.end
 
 // 测试环境
-const Testing = async(Widget, default_args = "") => {
+const Testing = async (Widget, default_args = "") => {
     let M = null
-        // 判断hash是否和当前设备匹配
+    // 判断hash是否和当前设备匹配
     if (config.runsInWidget) {
         M = new Widget(args.widgetParameter || '')
         const W = await M.render()
@@ -853,7 +852,7 @@ const Testing = async(Widget, default_args = "") => {
             const actions = M['_actions']
             const _actions = [
                 // 远程开发
-                async() => {
+                async () => {
                     // 1. 获取服务器ip
                     const a = new Alert()
                     a.title = "服务器 IP"
@@ -868,10 +867,10 @@ const Testing = async(Widget, default_args = "") => {
                     const id = await a.presentAlert()
                     if (id === -1) return
                     const ip = a.textFieldValue(0)
-                        // 保存到本地
+                    // 保存到本地
                     Keychain.set("xjj_debug_server", ip)
                     const server_api = `http://${ip}:5566`
-                        // 2. 发送当前文件到远程服务器
+                    // 2. 发送当前文件到远程服务器
                     const SELF_FILE = module.filename.replace('「小件件」开发环境', Script.name())
                     const req = new Request(`${server_api}/sync`)
                     req.method = "POST"
@@ -885,8 +884,8 @@ const Testing = async(Widget, default_args = "") => {
                         return M.notify("连接错误", e.message)
                     }
                     M.notify("连接成功", "编辑文件后保存即可进行下一步预览操作")
-                        // 重写console.log方法，把数据传递到nodejs
-                    const rconsole_log = async(data, t = 'log') => {
+                    // 重写console.log方法，把数据传递到nodejs
+                    const rconsole_log = async (data, t = 'log') => {
                         const _req = new Request(`${server_api}/console`)
                         _req.method = "POST"
                         _req.headers = {
@@ -910,10 +909,10 @@ const Testing = async(Widget, default_args = "") => {
                         rconsole_log(d, 'warn')
                     }
                     console.error = d => {
-                            lconsole_error(d)
-                            rconsole_log(d, 'error')
-                        }
-                        // 3. 同步
+                        lconsole_error(d)
+                        rconsole_log(d, 'error')
+                    }
+                    // 3. 同步
                     while (1) {
                         let _res = ""
                         try {
@@ -930,10 +929,10 @@ const Testing = async(Widget, default_args = "") => {
                             // console.log("[-] 没有更新内容")
                         } else if (_res.length > 0) {
                             M.notify("同步成功", "新文件已同步，大小：" + _res.length)
-                                // 重新加载组件
-                                // 1. 读取当前源码
+                            // 重新加载组件
+                            // 1. 读取当前源码
                             const _code = _res.split('// @组件代码开始')[1].split('// @组件代码结束')[0]
-                                // 2. 解析 widget class
+                            // 2. 解析 widget class
                             let NewWidget = null
                             try {
                                 const _func = new Function(`const _Debugger = Base => {\n${_code}\nreturn Widget\n}\nreturn _Debugger`)
@@ -946,16 +945,16 @@ const Testing = async(Widget, default_args = "") => {
                             delete M;
                             M = new NewWidget(__arg || default_args || '')
                             if (__size) M.init(__size)
-                                // 写入文件
+                            // 写入文件
                             FileManager.local().writeString(SELF_FILE, _res)
-                                // 执行预览
+                            // 执行预览
                             let i = await _actions[1](true)
                             if (i === (4 + Object.keys(actions).length)) break
                         }
                     }
                 },
                 // 预览组件
-                async(debug = false) => {
+                async (debug = false) => {
                     let a = new Alert()
                     a.title = "预览组件"
                     a.message = "测试桌面组件在各种尺寸下的显示效果"
@@ -1011,16 +1010,16 @@ const Testing = async(Widget, default_args = "") => {
                     return i
                 },
                 // 复制源码
-                async() => {
+                async () => {
                     const SELF_FILE = module.filename.replace('「小件件」开发环境', Script.name())
                     const source = FileManager.local().readString(SELF_FILE)
                     Pasteboard.copyString(source)
                     await M.notify("复制成功", "当前脚本的源代码已复制到剪贴板！")
                 },
-                async() => {
+                async () => {
                     Safari.openInApp("https://www.kancloud.cn/im3x/scriptable/content", false)
                 },
-                async() => {
+                async () => {
                     Safari.openInApp("https://support.qq.com/products/287371", false)
                 }
             ]
@@ -1059,15 +1058,15 @@ module.exports = {
     Running,
 }
 
-// 自更新
-// 流程：
-// 1. 获取远程gitee仓库的本文件代码
-// 2. 对比sha，如果和本地存储的不一致，则下载
-// 3. 下载保存，存储sha
-// 4. 更新时间为每小时一次
-// 
-;
-(async() => {
+    // 自更新
+    // 流程：
+    // 1. 获取远程gitee仓库的本文件代码
+    // 2. 对比sha，如果和本地存储的不一致，则下载
+    // 3. 下载保存，存储sha
+    // 4. 更新时间为每小时一次
+    // 
+    ;
+(async () => {
     const UPDATE_KEY = "XJJ_UPDATE_AT"
     let UPDATED_AT = 0
     const UPDATE_FILE = '「小件件」开发环境.js'

@@ -21,7 +21,6 @@ class Widget extends Base {
         super(arg)
         this.name = '联通'
         this.desc = '联通流量监控'
-        this.logo = 'https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/liuliang.png?OSSAccessKeyId=LTAI5tFGDfkLhGjULuvqVp3P&Expires=1625792960&Signature=Tp%2BVjUXwGSZZ7Wo4yVRedH48djM%3D'
         this.registerAction("监控配置", this.actionSettings)
         this.registerAction("透明背景", this.actionSettings3)
         this.BG_FILE = this.getBackgroundImage()
@@ -68,6 +67,7 @@ class Widget extends Base {
     async renderMedium(data) {
         let w = new ListWidget()
         let fm = FileManager.iCloud()
+
         w.backgroundImage = fm.readImage(await this.writeUnicomImage("/10010/10010_backgroundImage"))
         let date = new Date();
         let newdate = date.toLocaleString('chinese', { hour12: false });
@@ -86,9 +86,9 @@ class Widget extends Base {
 
         const box = maxbox.addStack()
         box.layoutHorizontally()
-
         const flowpngbox = box.addStack()
-        let flowPNG = flowpngbox.addImage(await this.getImageByUrl(this.logo))
+
+        let flowPNG = flowpngbox.addImage(fm.readImage(await this.writeUnicomImage("/10010/10010_img")))
         flowPNG.imageSize = new Size(100, 100)
         flowpngbox.addSpacer(14)
 
@@ -113,7 +113,7 @@ class Widget extends Base {
                 idx.textColor = new Color('#fe2d46', 1)
             } else {
                 if (i == 2 && !containsZero) {
-                    let wei = cell.addImage(await this.getImageByUrl("https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/wei4.png"))
+                    let wei = cell.addImage(fm.readImage(await this.writeUnicomImage("/10010/10010_wei.png")))
                     wei.imageSize = new Size(16, 15)
                 }
                 idx.textColor = new Color('#ff6600', 1)
@@ -134,14 +134,11 @@ class Widget extends Base {
      * 获取数据函数，函数名可不固定
      */
     async getData() {
-        // let username = "%E7%8E%8B%E5%92%8C%E4%BF%8A"
+        let cookie = this.settings['cookie']
+        const res = await this.getUnicomDetails(cookie)
+        console.log(res);
 
-        // console.log(decodeURI(username));
-        // let cookie = this.settings['cookie']
-        // const res = await this.getUnicomDetails(cookie)
-        // console.log(res);
-
-        // return res
+        return res
     }
 
     /**
