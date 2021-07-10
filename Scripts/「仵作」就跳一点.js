@@ -68,7 +68,7 @@ class Widget extends Base {
         let w = new ListWidget()
         let fm = FileManager.iCloud()
 
-        w.backgroundImage = fm.readImage(await this.writeUnicomImage("/10010/10010_backgroundImage"))
+        w.backgroundImage = fm.readImage(await this.writeUnicomImage("/10010/10010_backgroundImage.png"))
         let date = new Date();
         let newdate = date.toLocaleString('chinese', { hour12: false });
         let timenow = newdate.replace(/\//g, '-')
@@ -88,7 +88,7 @@ class Widget extends Base {
         box.layoutHorizontally()
         const flowpngbox = box.addStack()
 
-        let flowPNG = flowpngbox.addImage(fm.readImage(await this.writeUnicomImage("/10010/10010_img")))
+        let flowPNG = flowpngbox.addImage(fm.readImage(await this.writeUnicomImage("/10010/10010_img.png")))
         flowPNG.imageSize = new Size(100, 100)
         flowpngbox.addSpacer(14)
 
