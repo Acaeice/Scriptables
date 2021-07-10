@@ -68,10 +68,7 @@ class Widget extends Base {
     async renderMedium(data) {
             let w = new ListWidget()
             let fm = FileManager.iCloud()
-            if (!fm.fileExists(fm.documentsDirectory() + "/10010_backgroundImage")) {
-                await this.writeUnicomImage()
-                w.backgroundImage = fm.readImage(fm.documentsDirectory() + "/10010_backgroundImage")
-            }
+            w.backgroundImage = fm.readImage(await this.writeUnicomImage("/10010/10010_backgroundImage"))
             let date = new Date();
             let newdate = date.toLocaleString('chinese', { hour12: false });
             let timenow = newdate.replace(/\//g, '-')

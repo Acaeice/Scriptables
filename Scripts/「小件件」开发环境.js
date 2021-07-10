@@ -244,25 +244,24 @@ class Base {
 
     /**
      * 将服务器图片下载到本地iCloud
+     * @param {string} filepath 文件名
      */
-    async writeUnicomImage() {
-        let imgarr = ["10010/10010_backgroundImage", "10010/10010_img"]
+    async writeUnicomImage(filepath) {
         let fm = FileManager.iCloud()
+        let path = ""
         if (!fm.isDirectory(fm.documentsDirectory() + "/10010")) {
             fm.createDirectory(fm.documentsDirectory() + "/10010", true)
         }
-        imgarr.map(async(v, i) => {
-            if (!fm.fileExists(fm.documentsDirectory() + v)) {
-                fm.writeImage(fm.documentsDirectory() + v, await this.getImageByUrl(`https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/${v.match(/\/([^/]*)$/)[1]}`))
-                console.log("___________下载成功" + v);
-                if (!fm.isFileDownloaded(fm.documentsDirectory() + v)) {
-                    fm.downloadFileFromiCloud(fm.documentsDirectory() + v)
-                }
+        if (!fm.fileExists(fm.documentsDirectory() + filepath)) {
+            fm.writeImage(fm.documentsDirectory() + filepath, await this.getImageByUrl(`https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/${filepath.match(/\/([^/]*)$/)[1]}`))
+            console.log("___________下载成功" + filepath);
+            if (!fm.isFileDownloaded(fm.documentsDirectory() + filepath)) {
+                fm.downloadFileFromiCloud(fm.documentsDirectory() + filepath)
             }
+            path = fm.documentsDirectory() + filepath
+        }
 
-        })
-
-        return null
+        return path
     }
 
 
