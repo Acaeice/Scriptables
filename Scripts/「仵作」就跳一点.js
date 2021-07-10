@@ -66,9 +66,6 @@ class Widget extends Base {
    * 渲染中尺寸组件
    */
   async renderMedium(data) {
-    // const img = await this.getImageByUrl("https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/xiu.png?OSSAccessKeyId=LTAI5tFGDfkLhGjULuvqVp3P&Expires=1625687916&Signature=PkQfoj%2BEMGLpp%2BxEbxXD8FDn0sU%3D")
-    // if (!img) return
-    // console.log(img);
     let w = new ListWidget()
     let fm = FileManager.iCloud()
     let path = fm.documentsDirectory() + "/IMG_2280.JPG"
@@ -82,11 +79,11 @@ class Widget extends Base {
 
 
     const gettimenow = maxbox.addStack()
+    gettimenow.addSpacer(65)
+    gettimenow.setPadding(0,0,8,0)
     let timeText = gettimenow.addText("查询时间：" + timenow)
     timeText.font = Font.lightSystemFont(12)
     timeText.textColor = new Color("959595", 1)
-    gettimenow.borderWidth = 1
-    gettimenow.borderColor = new Color("6dce3c", 1)
 
     const box = maxbox.addStack()
     box.layoutHorizontally()
@@ -95,44 +92,35 @@ class Widget extends Base {
     let flowPNG = flowpngbox.addImage(await this.getImageByUrl(this.logo))
     flowPNG.imageSize = new Size(100, 100)
     flowpngbox.addSpacer(14)
-    flowpngbox.borderWidth = 1
-    flowpngbox.borderColor = new Color("6dce3c", 1)
 
     const totalbox = box.addStack()
-    totalbox.borderWidth = 1
-    totalbox.borderColor = new Color("6dce3c", 1)
     totalbox.size = new Size(180, 100)
-    totalbox
 
-    let arr = new Array("当前套餐：", "本月合计：", "本月以免：", "跳了一点：")
-    let arr2 = new Array("米粉卡（5元卡）", "201", "200", "1")
-
+    let arr = new Array("当前套餐：","本月以免：","有种别跳：", "本月合计：")
+    let arr2 = new Array("米粉卡（5元卡）", "201","200  ", "1")
+    let containsZero = arr2[2].substring(0,1).match(/^[0]$/);
     const text = totalbox.addStack()
-
     text.layoutVertically()
+    text.setPadding(6,0,0,0)
     arr.map(async (d, i) => {
       const cell = text.addStack()
       let _title = d
       const cell_text = cell.addText(_title)
       cell_text.font = Font.thinMonospacedSystemFont(13)
       cell_text.lineLimit = 1
-
       const idx = cell.addText(arr2[i])
       idx.font = Font.systemFont(12)
       if (i === 0) {
         idx.textColor = new Color('#fe2d46', 1)
-      } else if (i === 1) {
-        idx.textColor = new Color('#ff6600', 1)
-      } else if (i === 2) {
-        idx.textColor = new Color('#faa90e', 1)
-        if(3>2){
-          cell.addImage(await this.getImageByUrl("https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/risk.png?OSSAccessKeyId=LTAI5tFGDfkLhGjULuvqVp3P&Expires=1626185519&Signature=D4X%2FRKaKOeyu5TsOeSHyybbxspU%3D"))
+      } else {
+        if(i==2&&!containsZero){
+          let wei = cell.addImage(await this.getImageByUrl("https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/wei4.png"))
+          wei.imageSize = new Size(16,15)
         }
-      } else if (i == 3) {
-        idx.textColor = new Color('#9195a3', 1)
-      }
+        idx.textColor = new Color('#ff6600', 1)
+      } 
       cell.addSpacer()
-      text.addSpacer(10)
+      text.addSpacer(8)
     })
     return w
   }
@@ -147,18 +135,11 @@ class Widget extends Base {
    * 获取数据函数，函数名可不固定
    */
   async getData() {
-    // const req = new Request("https://m.client.10010.com/servicequerybusiness/operationservice/queryOcsPackageFlowLeftContent")
-    // req.method = "POST"
-    // req.headers = {
-    //   "Cookie": this.settings['cookie']
-    // }
-    // const res = await req.loadJSON()
-    // const current = res.resources[0].details[1].use * 1024
-    // console.log(current);
-    // const liveuse = Keychain.get("live") * 1024
-    // const resdata = current - 5401743.26
-    // console.log(resdata / 1024);
-    // return current
+    let cookie = this.settings['cookie']
+    const res = this.getUnicomDetails(cookie)
+    console.log(res);
+
+    return res
   }
 
   /**
