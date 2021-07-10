@@ -248,7 +248,7 @@ class Base {
      */
     async writeUnicomImage(filepath) {
         let fm = FileManager.iCloud()
-        let path = ""
+        let path = fm.documentsDirectory() + filepath
         if (!fm.isDirectory(fm.documentsDirectory() + "/10010")) {
             fm.createDirectory(fm.documentsDirectory() + "/10010", true)
         }
@@ -258,7 +258,6 @@ class Base {
             if (!fm.isFileDownloaded(fm.documentsDirectory() + filepath)) {
                 fm.downloadFileFromiCloud(fm.documentsDirectory() + filepath)
             }
-            path = fm.documentsDirectory() + filepath
         }
 
         return path

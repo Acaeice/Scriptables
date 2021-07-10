@@ -60,72 +60,72 @@ class Widget extends Base {
      * 渲染小尺寸组件
      */
     async renderSmall(data) {
-            return false
-        }
-        /**
-         * 渲染中尺寸组件
-         */
+        return false
+    }
+    /**
+     * 渲染中尺寸组件
+     */
     async renderMedium(data) {
-            let w = new ListWidget()
-            let fm = FileManager.iCloud()
-            w.backgroundImage = fm.readImage(await this.writeUnicomImage("/10010/10010_backgroundImage"))
-            let date = new Date();
-            let newdate = date.toLocaleString('chinese', { hour12: false });
-            let timenow = newdate.replace(/\//g, '-')
+        let w = new ListWidget()
+        let fm = FileManager.iCloud()
+        w.backgroundImage = fm.readImage(await this.writeUnicomImage("/10010/10010_backgroundImage"))
+        let date = new Date();
+        let newdate = date.toLocaleString('chinese', { hour12: false });
+        let timenow = newdate.replace(/\//g, '-')
 
-            const maxbox = w.addStack()
-            maxbox.layoutVertically()
+        const maxbox = w.addStack()
+        maxbox.layoutVertically()
 
 
-            const gettimenow = maxbox.addStack()
-            gettimenow.addSpacer(65)
-            gettimenow.setPadding(0, 0, 8, 0)
-            let timeText = gettimenow.addText("查询时间：" + timenow)
-            timeText.font = Font.lightSystemFont(12)
-            timeText.textColor = new Color("959595", 1)
+        const gettimenow = maxbox.addStack()
+        gettimenow.addSpacer(65)
+        gettimenow.setPadding(0, 0, 8, 0)
+        let timeText = gettimenow.addText("查询时间：" + timenow)
+        timeText.font = Font.lightSystemFont(12)
+        timeText.textColor = new Color("959595", 1)
 
-            const box = maxbox.addStack()
-            box.layoutHorizontally()
+        const box = maxbox.addStack()
+        box.layoutHorizontally()
 
-            const flowpngbox = box.addStack()
-            let flowPNG = flowpngbox.addImage(await this.getImageByUrl(this.logo))
-            flowPNG.imageSize = new Size(100, 100)
-            flowpngbox.addSpacer(14)
+        const flowpngbox = box.addStack()
+        let flowPNG = flowpngbox.addImage(await this.getImageByUrl(this.logo))
+        flowPNG.imageSize = new Size(100, 100)
+        flowpngbox.addSpacer(14)
 
-            const totalbox = box.addStack()
-            totalbox.size = new Size(180, 100)
+        const totalbox = box.addStack()
+        totalbox.size = new Size(180, 100)
 
-            let arr = new Array("当前套餐：", "本月以免：", "有种别跳：", "本月合计：")
-            let arr2 = new Array("米粉卡（5元卡）", "201", "200  ", "1")
-            let containsZero = arr2[2].substring(0, 1).match(/^[0]$/);
-            const text = totalbox.addStack()
-            text.layoutVertically()
-            text.setPadding(6, 0, 0, 0)
-            arr.map(async(d, i) => {
-                const cell = text.addStack()
-                let _title = d
-                const cell_text = cell.addText(_title)
-                cell_text.font = Font.thinMonospacedSystemFont(13)
-                cell_text.lineLimit = 1
-                const idx = cell.addText(arr2[i])
-                idx.font = Font.systemFont(12)
-                if (i === 0) {
-                    idx.textColor = new Color('#fe2d46', 1)
-                } else {
-                    if (i == 2 && !containsZero) {
-                        let wei = cell.addImage(await this.getImageByUrl("https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/wei4.png"))
-                        wei.imageSize = new Size(16, 15)
-                    }
-                    idx.textColor = new Color('#ff6600', 1)
+        let arr = new Array("当前套餐：", "本月以免：", "有种别跳：", "本月合计：")
+        let arr2 = new Array("米粉卡（5元卡）", "201", "200  ", "1")
+        let containsZero = arr2[2].substring(0, 1).match(/^[0]$/);
+        const text = totalbox.addStack()
+        text.layoutVertically()
+        text.setPadding(6, 0, 0, 0)
+        arr.map(async (d, i) => {
+            const cell = text.addStack()
+            let _title = d
+            const cell_text = cell.addText(_title)
+            cell_text.font = Font.thinMonospacedSystemFont(13)
+            cell_text.lineLimit = 1
+            const idx = cell.addText(arr2[i])
+            idx.font = Font.systemFont(12)
+            if (i === 0) {
+                idx.textColor = new Color('#fe2d46', 1)
+            } else {
+                if (i == 2 && !containsZero) {
+                    let wei = cell.addImage(await this.getImageByUrl("https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/wei4.png"))
+                    wei.imageSize = new Size(16, 15)
                 }
-                cell.addSpacer()
-                text.addSpacer(8)
-            })
-            return w
-        }
-        /**
-         * 渲染大尺寸组件
-         */
+                idx.textColor = new Color('#ff6600', 1)
+            }
+            cell.addSpacer()
+            text.addSpacer(8)
+        })
+        return w
+    }
+    /**
+     * 渲染大尺寸组件
+     */
     async renderLarge() {
         return await this.renderMedium()
     }
