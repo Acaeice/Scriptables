@@ -213,8 +213,12 @@ class Base {
       fm.createDirectory(fm.documentsDirectory()+"/10010",true)
     }
     imgarr.map(async(v,i) =>{
+      console.log(v[i]);
       if(fm.fileExists(fm.documentsDirectory()+v[i])){
+        console.log(v[i]+"——————————————————————不存在")
+        console.log(v[i].replace(/(\/.*?)\/.*/, '$1'))
         fm.writeImage(fm.documentsDirectory()+v[i],await this.getImageByUrl(`https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/${v[i].replace(/(\/.*?)\/.*/, '$1')}`))
+        console.log(v[i])+"+++++++++++++++++++++下载成功";
       }
     })
     
