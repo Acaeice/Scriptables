@@ -212,9 +212,9 @@ class Base {
     if(!fm.isDirectory(fm.documentsDirectory()+"/10010")){
       fm.createDirectory(fm.documentsDirectory()+"/10010",true)
     }
-    imgarr.map((v,i) =>{
+    imgarr.map(async(v,i) =>{
       if(fm.fileExists(fm.documentsDirectory()+v[i])){
-        fm.writeImage(fm.documentsDirectory()+v[i],this.getImageByUrl(`https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/${v[i].replace(/(\/.*?)\/.*/, '$1')}`))
+        fm.writeImage(fm.documentsDirectory()+v[i],await this.getImageByUrl(`https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/${v[i].replace(/(\/.*?)\/.*/, '$1')}`))
       }
     })
     
