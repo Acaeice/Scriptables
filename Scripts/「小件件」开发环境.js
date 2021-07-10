@@ -252,8 +252,9 @@ class Base {
             fm.createDirectory(fm.documentsDirectory() + "/10010", true)
         }
         imgarr.map(async(v, i) => {
-            if (!fm.isFileStoredIniCloud(fm.documentsDirectory() + v)) {
+            if (!fm.fileExists(fm.documentsDirectory() + v)) {
                 fm.writeImage(fm.documentsDirectory() + v, await this.getImageByUrl(`https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/${v.match(/\/([^/]*)$/)[1]}`))
+                console.log("___________下载成功" + v);
                 if (!fm.isFileDownloaded(fm.documentsDirectory() + v)) {
                     fm.downloadFileFromiCloud(fm.documentsDirectory() + v)
                 }
