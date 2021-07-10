@@ -237,7 +237,6 @@ class Base {
             }
             res = await req.loadJSON()
         } catch (error) { }
-        console.log(res)
         return res
     }
 
