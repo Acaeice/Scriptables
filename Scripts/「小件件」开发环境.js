@@ -181,22 +181,25 @@ class Base {
    * @param {string} cookie 组件对象
    */
   async getUnicomDetails (cookie){
-    const req = new Request("https://m.client.10010.com/servicequerybusiness/operationservice/queryOcsPackageFlowLeftContentRevisedInJune")
-    req.method = "POST"
-    req.headers = {
-      "Cookie": this.settings['cookie'],
-      "User-Agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 14_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 unicom{version:iphone_c@8.0704}{systemVersion:dis}{yw_code:}",
-      "Referer":"https://img.client.10010.com/yuliangchaxunsf/index.html?version=iphone_c@8.0704&desmobile=17683282245&yw_code=&time=1625675488",
-      "Origin": "https://img.client.10010.com",
-      "Host": "m.client.10010.com",
-      "Content-Type": "application/x-www-form-urlencoded",
-      "Content-Length": "150",
-      "Connection": "keep-alive",
-      "Accept-Language": "zh-cn",
-      "Accept-Encoding": "gzip, deflate, br",
-    }
-    const res = await req.loadJSON()
-    
+    let res = null
+    try {
+      const req = new Request("https://m.client.10010.com/servicequerybusiness/operationservice/queryOcsPackageFlowLeftContentRevisedInJune")
+      req.method = "POST"
+      req.headers = {
+        "Cookie": this.settings['cookie'],
+        "User-Agent":"Mozilla/5.0 (iPhone; CPU iPhone OS 14_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 unicom{version:iphone_c@8.0704}{systemVersion:dis}{yw_code:}",
+        "Referer":"https://img.client.10010.com/yuliangchaxunsf/index.html?version=iphone_c@8.0704&desmobile=17683282245&yw_code=&time=1625675488",
+        "Origin": "https://img.client.10010.com",
+        "Host": "m.client.10010.com",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Length": "150",
+        "Connection": "keep-alive",
+        "Accept-Language": "zh-cn",
+        "Accept-Encoding": "gzip, deflate, br",
+      }
+      res = await req.loadJSON()
+    } catch (error) {}
+     
     return res
   }
 
