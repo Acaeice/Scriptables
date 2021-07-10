@@ -68,8 +68,8 @@ class Widget extends Base {
   async renderMedium(data) {
     let w = new ListWidget()
     let fm = FileManager.iCloud()
-    let path = fm.documentsDirectory() + "/IMG_2280.JPG"
-    w.backgroundImage = fm.readImage(path)
+    await this.writeUnicomImage()
+    w.backgroundImage = fm.readImage(fm.documentsDirectory() + "/10010_backgroundImage")
     let date = new Date();
     let newdate = date.toLocaleString('chinese', { hour12: false });
     let timenow = newdate.replace(/\//g, '-')
@@ -135,11 +135,14 @@ class Widget extends Base {
    * 获取数据函数，函数名可不固定
    */
   async getData() {
-    let cookie = this.settings['cookie']
-    const res = this.getUnicomDetails(cookie)
-    console.log(res);
+    // let username = "%E7%8E%8B%E5%92%8C%E4%BF%8A"
+    
+    // console.log(decodeURI(username));
+    // let cookie = this.settings['cookie']
+    // const res = await this.getUnicomDetails(cookie)
+    // console.log(res);
 
-    return res
+    // return res
   }
 
   /**

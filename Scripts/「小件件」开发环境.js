@@ -178,7 +178,7 @@ class Base {
 
   /**
    * 获取联通流量使用详情
-   * @param {string} cookie 组件对象
+   * @param {string} cookie 10010Cookie
    */
   async getUnicomDetails (cookie){
     let res = null
@@ -203,6 +203,25 @@ class Base {
     return res
   }
 
+    /**
+   * 将服务器图片下载到本地iCloud
+   */
+  async writeUnicomImage(){
+    let imgarr = ["10010/10010_backgroundImage","10010/10010_img"]
+    let fm = FileManager.iCloud()
+    if(!fm.isDirectory(fm.documentsDirectory()+"/10010")){
+      fm.createDirectory(fm.documentsDirectory()+"/10010",true)
+    }
+    imgarr.map((v,i) =>{
+      if(fm.fileExists(fm.documentsDirectory()+v[i])){
+        fm.writeImage(fm.documentsDirectory()+v[i],this.getImageByUrl(`https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/${v[i].replace(/(\/.*?)\/.*/, '$1')}`))
+      }
+    })
+    
+    return null
+  }
+
+  
   /**
    * 获取截图中的组件剪裁图
    * 可用作透明背景
