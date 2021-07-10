@@ -214,7 +214,7 @@ class Base {
     }
     imgarr.map(async(v,i) =>{
       console.log(v[i]);
-      if(fm.fileExists(fm.documentsDirectory()+v[i])){
+      if(!fm.fileExists(fm.documentsDirectory()+v[i])){
         console.log(v[i]+"——————————————————————不存在")
         console.log(v[i].replace(/(\/.*?)\/.*/, '$1'))
         fm.writeImage(fm.documentsDirectory()+v[i],await this.getImageByUrl(`https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/${v[i].replace(/(\/.*?)\/.*/, '$1')}`))
