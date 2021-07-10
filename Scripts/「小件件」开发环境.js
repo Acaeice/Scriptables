@@ -252,12 +252,8 @@ class Base {
             fm.createDirectory(fm.documentsDirectory() + "/10010", true)
         }
         imgarr.map(async(v, i) => {
-            console.log(v);
             if (!fm.isFileStoredIniCloud(fm.documentsDirectory() + v)) {
-                console.log(v + "——————————————————————不存在")
-                console.log(v.replace(/(\/.*?)\/.*/, '$1'))
-                fm.writeImage(fm.documentsDirectory() + v, await this.getImageByUrl(`https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/${v.replace(/(\/.*?)\/.*/, '$1')}`))
-                console.log(v) + "+++++++++++++++++++++下载成功"
+                fm.writeImage(fm.documentsDirectory() + v, await this.getImageByUrl(`https://rootwang.oss-cn-chengdu.aliyuncs.com/imges/${v.match(/\/([^/]*)$/)[1]}`))
                 if (!fm.isFileDownloaded(fm.documentsDirectory() + v)) {
                     fm.downloadFileFromiCloud(fm.documentsDirectory() + v)
                 }
