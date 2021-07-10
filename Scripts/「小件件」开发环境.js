@@ -222,7 +222,7 @@ class Base {
     async getUnicomDetails(cookie) {
         let res = null
         try {
-            const req = new Request("https://m.client.10010.com/servicequerybusiness/operationservice/queryOcsPackageFlowLeftContentRevisedInJune")
+            let req = new Request("https://m.client.10010.com/servicequerybusiness/operationservice/queryOcsPackageFlowLeftContentRevisedInJune")
             req.method = "POST"
             req.headers = {
                 "Cookie": cookie,
