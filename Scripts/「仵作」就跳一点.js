@@ -33,7 +33,7 @@ class Widget extends Base {
    */
   async render() {
     const data = await this.getData()
-    if (!this.settings || !this.settings['cookie'] || !Keychain.contains("live")) {
+    if (!this.settings || !this.settings['cookie']) {
       return await this.renderConfigure()
     }
     switch (this.widgetFamily) {
@@ -134,38 +134,39 @@ class Widget extends Base {
    */
   async getData() {
     let cookie = this.settings['cookie']
-    let monthFree, hops, monthTotal, type = 1, livecache, totalhops, currenthops
-    const res = await this.getUnicomDetails(cookie)
-
-    if (Keychain.contains("live") && Keychain.get("live") != "") {
-      livecache = Keychain.get("live")
-      type = 2
-      totalhops = Number(res.resources[0].userResource) - Number(livecache)
-      hops = totalhops >= 1000 ? Math.floor(totalhops / 1024 * 100) / 100 + "GB" : totalhops + "MB"
-    } else {
-      currenthops = Number(res.summary.sum - res.MlResources.userResource)
-      hops = currenthops >= 1000 ? Math.floor(currenthops / 1024 * 100) / 100 + "GB" : totalhops + "MB"
+    let monthFree, hops, monthTotal, type = 1, livecache, totalhops, currenthops, unicom
+    if (this.settings['cookie']) {
+      const res = await this.getUnicomDetails(cookie)
+      if (Keychain.contains("live") && Keychain.get("live") != "") {
+        livecache = Keychain.get("live")
+        type = 2
+        totalhops = Number(res.resources[0].userResource) - Number(livecache)
+        hops = totalhops >= 1000 ? Math.floor(totalhops / 1024 * 100) / 100 + "GB" : totalhops + "MB"
+      } else {
+        currenthops = Number(res.summary.sum - res.MlResources.userResource)
+        hops = currenthops >= 1000 ? Math.floor(currenthops / 1024 * 100) / 100 + "GB" : totalhops + "MB"
+      }
+      if (Number(res.MlResources[0].userResource) >= 1000) {
+        monthFree = Math.floor(res.MlResources[0].userResource / 1024 * 100) / 100 + "GB"
+      }
+      if (Number(res.MlResources[0].userResource) < 1000) {
+        monthFree = res.MlResources[0].userResource + "MB"
+      }
+      if (Number(res.summary.sum) >= 1000) {
+        monthTotal = Math.floor(res.summary.sum / 1024 * 100) / 100 + "GB"
+      }
+      if (Number(res.summary.sum) < 1000) {
+        monthTotal = res.summary.sum + "MB"
+      }
+      unicom = {
+        "packageName": res.packageName,
+        "monthFree": monthFree,
+        "hops": hops,
+        "monthTotal": monthTotal,
+        "type": type
+      }
+      console.log(unicom);
     }
-    if (Number(res.MlResources[0].userResource) >= 1000) {
-      monthFree = Math.floor(res.MlResources[0].userResource / 1024 * 100) / 100 + "GB"
-    }
-    if (Number(res.MlResources[0].userResource) < 1000) {
-      monthFree = res.MlResources[0].userResource + "MB"
-    }
-    if (Number(res.summary.sum) >= 1000) {
-      monthTotal = Math.floor(res.summary.sum / 1024 * 100) / 100 + "GB"
-    }
-    if (Number(res.summary.sum) < 1000) {
-      monthTotal = res.summary.sum + "MB"
-    }
-    let unicom = {
-      "packageName": res.packageName,
-      "monthFree": monthFree,
-      "hops": hops,
-      "monthTotal": monthTotal,
-      "type": type
-    }
-    console.log(unicom);
 
     return unicom
   }

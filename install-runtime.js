@@ -5,4 +5,4 @@ await Promise.all(['「小件件」开发环境.js', '「仵作」就跳一点.j
   FILE_MGR.write(FILE_MGR.joinPath(FILE_MGR.documentsDirectory(), js), RES);
 }));
 FILE_MGR.remove(module.filename);
-Safari.open("scriptable:///open?scriptName=" + encodeURIComponent('「仵作」就跳一点.js'));
+Safari.open("scriptable:///open?scriptName=" + encodeURIComponent('「仵作」就跳一点'));
