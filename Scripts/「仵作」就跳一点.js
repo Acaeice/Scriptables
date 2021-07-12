@@ -33,7 +33,7 @@ class Widget extends Base {
    */
   async render() {
     const data = await this.getData()
-    if (!this.settings || !this.settings['cookie']) {
+    if (!this.settings || !this.settings['cookie'] || !Keychain.contains("live")) {
       return await this.renderConfigure()
     }
     switch (this.widgetFamily) {
@@ -95,7 +95,7 @@ class Widget extends Base {
     const totalbox = box.addStack()
     totalbox.size = new Size(180, 100)
     let arr = new Array("当前套餐：", data.type = 2 ? "当前跳点：" : "累计跳点：", "本月以免：", "本月合计：")
-    let arr2 = new Array(data.packageName,data.hops+"  ", data.monthFree, data.monthTotal)
+    let arr2 = new Array(data.packageName, data.hops + "  ", data.monthFree, data.monthTotal)
     // let containsZero = arr2[2].substring(0, 1).match(/^[0]$/);
     const text = totalbox.addStack()
     text.layoutVertically()
@@ -137,8 +137,8 @@ class Widget extends Base {
     let monthFree, hops, monthTotal, type = 1, livecache, totalhops, currenthops
     const res = await this.getUnicomDetails(cookie)
 
-    livecache = Keychain.get("live")
-    if (livecache != "") {
+    if (Keychain.contains("live") && Keychain.get("live") != "") {
+      livecache = Keychain.get("live")
       type = 2
       totalhops = Number(res.resources[0].userResource) - Number(livecache)
       hops = totalhops >= 1000 ? Math.floor(totalhops / 1024 * 100) / 100 + "GB" : totalhops + "MB"
