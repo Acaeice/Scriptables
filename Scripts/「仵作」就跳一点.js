@@ -179,14 +179,20 @@ class Widget extends Base {
     a.title = "配置流量监控"
     a.message = "请先配置饼干后再更新缓存"
 
-    const menus = ['Cookie', '更新缓存'];;
+    const menus = ['Cookie', '更新缓存', '清除配置'];;
     [{
       name: 'cookie',
       text: '配置饼干'
     }, {
       name: 'cache',
       text: "更新缓存"
+    }, {
+      name: 'removestting',
+      text: '清除配置'
     }].map(item => {
+      if (item.name = "removestting") {
+        a.addAction('🔧' + item.text)
+      }
       a.addAction((this.settings[item.name] ? ' ✅ ' : '❎ ') + item.text)
     })
 
