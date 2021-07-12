@@ -226,9 +226,6 @@ class Base {
             req.method = "POST"
             req.headers = {
                 "Cookie": cookie,
-                "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 unicom{version:iphone_c@8.0704}{systemVersion:dis}{yw_code:}",
-                "Origin": "https://img.client.10010.com",
-                "Host": "m.client.10010.com",
                 "Content-Type": "application/x-www-form-urlencoded",
                 "Content-Length": "150",
                 "Connection": "keep-alive",
@@ -236,6 +233,7 @@ class Base {
                 "Accept-Encoding": "gzip, deflate, br",
             }
             res = await req.loadJSON()
+            console.log(res);
         } catch (error) { }
         return res
     }
