@@ -13,220 +13,245 @@ const { Base } = require("./「小件件」开发环境")
 
 // @组件代码开始
 class Widget extends Base {
-    /**
-     * 传递给组件的参数，可以是桌面 Parameter 数据，也可以是外部如 URLScheme 等传递的数据
-     * @param {string} arg 自定义参数
-     */
-    constructor(arg) {
-        super(arg)
-        this.name = '联通'
-        this.desc = '联通流量监控'
-        this.registerAction("监控配置", this.actionSettings)
-        this.registerAction("透明背景", this.actionSettings3)
-        this.BG_FILE = this.getBackgroundImage()
-        if (this.BG_FILE) this.registerAction("移除背景", this.actionSettings4)
+  /**
+   * 传递给组件的参数，可以是桌面 Parameter 数据，也可以是外部如 URLScheme 等传递的数据
+   * @param {string} arg 自定义参数
+   */
+  constructor(arg) {
+    super(arg)
+    this.name = '联通'
+    this.desc = '联通流量监控'
+    this.registerAction("监控配置", this.actionSettings)
+    this.registerAction("透明背景", this.actionSettings3)
+    this.BG_FILE = this.getBackgroundImage()
+    if (this.BG_FILE) this.registerAction("移除背景", this.actionSettings4)
+  }
+
+  /**
+   * 渲染函数，函数名固定
+   * 可以根据 this.widgetFamily 来判断小组件尺寸，以返回不同大小的内容
+   */
+  async render() {
+    const data = await this.getData()
+    if (!this.settings || !this.settings['cookie']) {
+      return await this.renderConfigure()
     }
-
-    /**
-     * 渲染函数，函数名固定
-     * 可以根据 this.widgetFamily 来判断小组件尺寸，以返回不同大小的内容
-     */
-    async render() {
-        const data = await this.getData()
-        if (!this.settings || !this.settings['cookie']) {
-            return await this.renderConfigure()
-        }
-        switch (this.widgetFamily) {
-            case 'large':
-                return await this.renderLarge()
-            case 'medium':
-                return await this.renderMedium(data)
-            default:
-                return await this.renderSmall(data)
-        }
+    switch (this.widgetFamily) {
+      case 'large':
+        return await this.renderLarge()
+      case 'medium':
+        return await this.renderMedium(data)
+      default:
+        return await this.renderSmall(data)
     }
+  }
 
-    // 提示配置
-    async renderConfigure() {
-        const w = new ListWidget()
-        w.addText("请点击组件设置Cookie")
-        w.url = this.actionUrl("settings")
-        return w
+  // 提示配置
+  async renderConfigure() {
+    const w = new ListWidget()
+    w.addText("请点击组件设置Cookie")
+    w.url = this.actionUrl("settings")
+    return w
+  }
+
+
+  /**
+   * 渲染小尺寸组件
+   */
+  async renderSmall(data) {
+    return false
+  }
+  /**
+   * 渲染中尺寸组件
+   */
+  async renderMedium(data) {
+    let w = new ListWidget()
+    let fm = FileManager.iCloud()
+
+    w.backgroundImage = fm.readImage(await this.writeUnicomImage("/10010/10010_backgroundImage.png"))
+    let date = new Date();
+    let newdate = date.toLocaleString('chinese', { hour12: false });
+    let timenow = newdate.replace(/\//g, '-')
+
+    const maxbox = w.addStack()
+    maxbox.layoutVertically()
+
+
+    const gettimenow = maxbox.addStack()
+    gettimenow.addSpacer(65)
+    gettimenow.setPadding(0, 0, 8, 0)
+    let timeText = gettimenow.addText("查询时间：" + timenow)
+    timeText.font = Font.lightSystemFont(12)
+    timeText.textColor = new Color("959595", 1)
+
+    const box = maxbox.addStack()
+    box.layoutHorizontally()
+    const flowpngbox = box.addStack()
+
+    let flowPNG = flowpngbox.addImage(fm.readImage(await this.writeUnicomImage("/10010/10010_img.png")))
+    flowPNG.imageSize = new Size(100, 100)
+    flowpngbox.addSpacer(14)
+
+    const totalbox = box.addStack()
+    totalbox.size = new Size(180, 100)
+    let arr = new Array("当前套餐：", data.type = 2 ? "当前跳点：" : "累计跳点：", "本月以免：", "本月合计：")
+    let arr2 = new Array(data.packageName,data.hops+"  ", data.monthFree, data.monthTotal)
+    // let containsZero = arr2[2].substring(0, 1).match(/^[0]$/);
+    const text = totalbox.addStack()
+    text.layoutVertically()
+    text.setPadding(6, 0, 0, 0)
+    arr.map(async (d, i) => {
+      const cell = text.addStack()
+      let _title = d
+      const cell_text = cell.addText(_title)
+      cell_text.font = Font.thinMonospacedSystemFont(13)
+      cell_text.lineLimit = 1
+      const idx = cell.addText(arr2[i])
+      idx.font = Font.systemFont(12)
+      if (i === 0) {
+        idx.textColor = new Color('#fe2d46', 1)
+      } else {
+        // if (i == 2 && !containsZero) {
+        //   let wei = cell.addImage(fm.readImage(await this.writeUnicomImage("/10010/10010_wei.png")))
+        //   wei.imageSize = new Size(16, 15)
+        // }
+        idx.textColor = new Color('#ff6600', 1)
+      }
+      cell.addSpacer()
+      text.addSpacer(8)
+    })
+    return w
+  }
+  /**
+   * 渲染大尺寸组件
+   */
+  async renderLarge() {
+    return await this.renderMedium()
+  }
+
+  /**
+   * 获取数据函数，函数名可不固定
+   */
+  async getData() {
+    let cookie = this.settings['cookie']
+    let monthFree, hops, monthTotal, type = 1, livecache, totalhops, currenthops
+    const res = await this.getUnicomDetails(cookie)
+
+    livecache = Keychain.get("live")
+    if (livecache != "") {
+      type = 2
+      totalhops = Number(res.resources[0].userResource) - Number(livecache)
+      hops = totalhops >= 1000 ? Math.floor(totalhops / 1024 * 100) / 100 + "GB" : totalhops + "MB"
+    } else {
+      currenthops = Number(res.summary.sum - res.MlResources.userResource)
+      hops = currenthops >= 1000 ? Math.floor(currenthops / 1024 * 100) / 100 + "GB" : totalhops + "MB"
     }
-
-
-    /**
-     * 渲染小尺寸组件
-     */
-    async renderSmall(data) {
-        return false
+    if (Number(res.MlResources[0].userResource) >= 1000) {
+      monthFree = Math.floor(res.MlResources[0].userResource / 1024 * 100) / 100 + "GB"
     }
-    /**
-     * 渲染中尺寸组件
-     */
-    async renderMedium(data) {
-        let w = new ListWidget()
-        let fm = FileManager.iCloud()
-
-        w.backgroundImage = fm.readImage(await this.writeUnicomImage("/10010/10010_backgroundImage.png"))
-        let date = new Date();
-        let newdate = date.toLocaleString('chinese', { hour12: false });
-        let timenow = newdate.replace(/\//g, '-')
-
-        const maxbox = w.addStack()
-        maxbox.layoutVertically()
-
-
-        const gettimenow = maxbox.addStack()
-        gettimenow.addSpacer(65)
-        gettimenow.setPadding(0, 0, 8, 0)
-        let timeText = gettimenow.addText("查询时间：" + timenow)
-        timeText.font = Font.lightSystemFont(12)
-        timeText.textColor = new Color("959595", 1)
-
-        const box = maxbox.addStack()
-        box.layoutHorizontally()
-        const flowpngbox = box.addStack()
-
-        let flowPNG = flowpngbox.addImage(fm.readImage(await this.writeUnicomImage("/10010/10010_img.png")))
-        flowPNG.imageSize = new Size(100, 100)
-        flowpngbox.addSpacer(14)
-
-        const totalbox = box.addStack()
-        totalbox.size = new Size(180, 100)
-
-        let arr = new Array("当前套餐：", "本月以免：", "有种别跳：", "本月合计：")
-        let arr2 = new Array("米粉卡（5元卡）", "201", "200  ", "1")
-        let containsZero = arr2[2].substring(0, 1).match(/^[0]$/);
-        const text = totalbox.addStack()
-        text.layoutVertically()
-        text.setPadding(6, 0, 0, 0)
-        arr.map(async (d, i) => {
-            const cell = text.addStack()
-            let _title = d
-            const cell_text = cell.addText(_title)
-            cell_text.font = Font.thinMonospacedSystemFont(13)
-            cell_text.lineLimit = 1
-            const idx = cell.addText(arr2[i])
-            idx.font = Font.systemFont(12)
-            if (i === 0) {
-                idx.textColor = new Color('#fe2d46', 1)
-            } else {
-                if (i == 2 && !containsZero) {
-                    let wei = cell.addImage(fm.readImage(await this.writeUnicomImage("/10010/10010_wei.png")))
-                    wei.imageSize = new Size(16, 15)
-                }
-                idx.textColor = new Color('#ff6600', 1)
-            }
-            cell.addSpacer()
-            text.addSpacer(8)
-        })
-        return w
+    if (Number(res.MlResources[0].userResource) < 1000) {
+      monthFree = res.MlResources[0].userResource + "MB"
     }
-    /**
-     * 渲染大尺寸组件
-     */
-    async renderLarge() {
-        return await this.renderMedium()
+    if (Number(res.summary.sum) >= 1000) {
+      monthTotal = Math.floor(res.summary.sum / 1024 * 100) / 100 + "GB"
     }
-
-    /**
-     * 获取数据函数，函数名可不固定
-     */
-    async getData() {
-        let cookie = this.settings['cookie']
-        const res = await this.getUnicomDetails(cookie)
-        console.log(res);
-
-        return res
+    if (Number(res.summary.sum) < 1000) {
+      monthTotal = res.summary.sum + "MB"
     }
-
-    /**
-     * 自定义注册点击事件，用 actionUrl 生成一个触发链接，点击后会执行下方对应的 action
-     * @param {string} url 打开的链接
-     */
-    async actionOpenUrl(url) {
-        Safari.openInApp(url, false)
+    let unicom = {
+      "packageName": res.packageName,
+      "monthFree": monthFree,
+      "hops": hops,
+      "monthTotal": monthTotal,
+      "type": type
     }
+    console.log(unicom);
 
-    async actionSettings() {
-        const a = new Alert()
-        a.title = "配置流量监控"
-        a.message = "请先配置饼干后再更新缓存"
+    return unicom
+  }
 
-        const menus = ['Cookie', '更新缓存'];;
-        [{
-            name: 'cookie',
-            text: '配置饼干'
-        }, {
-            name: 'cache',
-            text: "更新缓存"
-        }].map(item => {
-            a.addAction((this.settings[item.name] ? ' ✅ ' : '❎ ') + item.text)
-        })
+  /**
+   * 自定义注册点击事件，用 actionUrl 生成一个触发链接，点击后会执行下方对应的 action
+   * @param {string} url 打开的链接
+   */
+  async actionOpenUrl(url) {
+    Safari.openInApp(url, false)
+  }
 
-        a.addCancelAction('取消设置')
-        const id = await a.presentSheet()
-        if (id === -1) return
-        await this['actionSettings' + id]()
-    }
+  async actionSettings() {
+    const a = new Alert()
+    a.title = "配置流量监控"
+    a.message = "请先配置饼干后再更新缓存"
 
-    // 配置Cookie
-    async actionSettings0() {
-        const a = new Alert()
-        a.title = "Cookie"
-        a.message = "请填写Cookie获取流量使用详情"
-        a.addTextField("联通Cookie", this.settings['cookie'])
-        a.addAction("确定")
-        a.addCancelAction("取消")
+    const menus = ['Cookie', '更新缓存'];;
+    [{
+      name: 'cookie',
+      text: '配置饼干'
+    }, {
+      name: 'cache',
+      text: "更新缓存"
+    }].map(item => {
+      a.addAction((this.settings[item.name] ? ' ✅ ' : '❎ ') + item.text)
+    })
 
-        const id = await a.presentAlert()
-        if (id === -1) return await this.actionSettings()
-        const n = a.textFieldValue(0)
-        if (!n) return await this.actionSettings0()
+    a.addCancelAction('取消设置')
+    const id = await a.presentSheet()
+    if (id === -1) return
+    await this['actionSettings' + id]()
+  }
 
-        this.settings['cookie'] = n
-        this.saveSettings()
+  // 配置Cookie
+  async actionSettings0() {
+    const a = new Alert()
+    a.title = "Cookie"
+    a.message = "请填写Cookie获取流量使用详情"
+    a.addTextField("联通Cookie", this.settings['cookie'])
+    a.addAction("确定")
+    a.addCancelAction("取消")
 
-        return await this.actionSettings()
-    }
+    const id = await a.presentAlert()
+    if (id === -1) return await this.actionSettings()
+    const n = a.textFieldValue(0)
+    if (!n) return await this.actionSettings0()
 
+    this.settings['cookie'] = n
+    this.saveSettings()
 
-    // 更新缓存
-    async actionSettings1() {
-        const cacheKey = "live"
-        const a = new Alert()
-        a.title = "更新缓存将重新计算跳点"
-        a.addAction("更新")
-        const use = Keychain.get(cacheKey)
-        a.addCancelAction("取消")
-
-        const id = await a.presentSheet()
-        if (id === -1) return await this.actionSettings()
-        const req = new Request("https://m.client.10010.com/servicequerybusiness/operationservice/queryOcsPackageFlowLeftContent")
-        req.method = "POST"
-        req.headers = {
-            "Cookie": this.settings['cookie']
-        }
-        const res = await req.loadJSON()
-        Keychain.set(cacheKey, res.resources[0].details[1].use + "MB")
-        this.settings['cache'] = 1
-        this.saveSettings()
-        return await this.actionSettings()
-    }
+    return await this.actionSettings()
+  }
 
 
-    // 透明背景
-    async actionSettings3() {
-        const img = await this.getWidgetScreenShot()
-        if (!img) return
-        this.setBackgroundImage(img)
-    }
+  // 更新缓存
+  async actionSettings1() {
+    const cacheKey = "live"
+    const a = new Alert()
+    a.title = "更新缓存将重新计算跳点"
+    a.addAction("更新")
+    const use = Keychain.get(cacheKey)
+    a.addCancelAction("取消")
 
-    // 移除背景
-    async actionSettings4() {
-        this.setBackgroundImage(null)
-    }
+    const id = await a.presentSheet()
+    if (id === -1) return await this.actionSettings()
+    let cookie = this.settings['cookie']
+    const res = await this.getUnicomDetails(cookie)
+    Keychain.set(cacheKey, res.resources[0].userResource)
+    this.settings['cache'] = 1
+    this.saveSettings()
+    return await this.actionSettings()
+  }
+
+
+  // 透明背景
+  async actionSettings3() {
+    const img = await this.getWidgetScreenShot()
+    if (!img) return
+    this.setBackgroundImage(img)
+  }
+
+  // 移除背景
+  async actionSettings4() {
+    this.setBackgroundImage(null)
+  }
 
 }
 // @组件代码结束

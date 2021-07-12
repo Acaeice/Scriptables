@@ -233,7 +233,6 @@ class Base {
                 "Accept-Encoding": "gzip, deflate, br",
             }
             res = await req.loadJSON()
-            console.log(res);
         } catch (error) { }
         return res
     }
