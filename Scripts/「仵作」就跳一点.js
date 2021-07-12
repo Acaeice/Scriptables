@@ -189,10 +189,7 @@ class Widget extends Base {
     }, {
       name: 'removestting',
       text: '清除配置'
-    }].map(item => {
-      if (item.name = "removestting") {
-        a.addAction('🔧' + item.text)
-      }
+    }].map((item, i) => {
       a.addAction((this.settings[item.name] ? ' ✅ ' : '❎ ') + item.text)
     })
 
@@ -239,6 +236,12 @@ class Widget extends Base {
     Keychain.set(cacheKey, res.resources[0].userResource)
     this.settings['cache'] = 1
     this.saveSettings()
+    return await this.actionSettings()
+  }
+
+  // 清除配置
+  async actionSettings2() {
+    Keychain.remove(this.SETTING_KEY)
     return await this.actionSettings()
   }
 
