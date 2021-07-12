@@ -94,9 +94,9 @@ class Widget extends Base {
 
     const totalbox = box.addStack()
     totalbox.size = new Size(180, 100)
-    let arr = new Array("当前套餐：", data.type = 2 ? "当前跳点：" : "累计跳点：", "本月以免：", "本月合计：")
+    let arr = new Array("当前套餐：", data.type == 2 ? "当前跳点：" : "累计跳点：", "本月以免：", "本月合计：")
     let arr2 = new Array(data.packageName, data.hops + "  ", data.monthFree, data.monthTotal)
-    // let containsZero = arr2[2].substring(0, 1).match(/^[0]$/);
+    let isExceed = (Number(String(data.hops).match(/(\S*)(MB|GB)/)[1]))
     const text = totalbox.addStack()
     text.layoutVertically()
     text.setPadding(6, 0, 0, 0)
@@ -111,10 +111,10 @@ class Widget extends Base {
       if (i === 0) {
         idx.textColor = new Color('#fe2d46', 1)
       } else {
-        // if (i == 2 && !containsZero) {
-        //   let wei = cell.addImage(fm.readImage(await this.writeUnicomImage("/10010/10010_wei.png")))
-        //   wei.imageSize = new Size(16, 15)
-        // }
+        if (i == 1 && isExceed >= 10) {
+          let wei = cell.addImage(await fm.readImage(await this.writeUnicomImage("/10010/10010_wei.png")))
+          wei.imageSize = new Size(16, 15)
+        }
         idx.textColor = new Color('#ff6600', 1)
       }
       cell.addSpacer()
@@ -137,27 +137,22 @@ class Widget extends Base {
     let monthFree, hops, monthTotal, type = 1, livecache, totalhops, currenthops, unicom
     if (this.settings['cookie']) {
       const res = await this.getUnicomDetails(cookie)
+      //跳点
       if (Keychain.contains("live") && Keychain.get("live") != "") {
         livecache = Keychain.get("live")
         type = 2
         totalhops = Number(res.resources[0].userResource) - Number(livecache)
-        hops = totalhops >= 1000 ? Math.floor(totalhops / 1024 * 100) / 100 + "GB" : totalhops + "MB"
+        hops = totalhops >= 1000 ? (totalhops / 1024).toFixed(2) + "GB" : totalhops.toFixed(2) + "MB"
       } else {
-        currenthops = Number(res.summary.sum - res.MlResources.userResource)
-        hops = currenthops >= 1000 ? Math.floor(currenthops / 1024 * 100) / 100 + "GB" : totalhops + "MB"
+        currenthops = Number(res.summary.sum) - Number(res.MlResources[0].userResource)
+        hops = currenthops >= 1000 ? (currenthops / 1024).toFixed(2) + "GB" : currenthops.toFixed(2) + "MB"
       }
-      if (Number(res.MlResources[0].userResource) >= 1000) {
-        monthFree = Math.floor(res.MlResources[0].userResource / 1024 * 100) / 100 + "GB"
-      }
-      if (Number(res.MlResources[0].userResource) < 1000) {
-        monthFree = res.MlResources[0].userResource + "MB"
-      }
-      if (Number(res.summary.sum) >= 1000) {
-        monthTotal = Math.floor(res.summary.sum / 1024 * 100) / 100 + "GB"
-      }
-      if (Number(res.summary.sum) < 1000) {
-        monthTotal = res.summary.sum + "MB"
-      }
+      //本月以免
+      Number(res.MlResources[0].userResource) >= 1000 ? monthFree = (Number(res.MlResources[0].userResource) / 1024).toFixed(2) + "GB" :
+        monthFree = Number(res.MlResources[0].userResource).toFixed(2) + "MB"
+      //本月合计
+      Number(res.summary.sum) >= 1000 ? monthTotal = (Number(res.summary.sum) / 1024).toFixed(2) + "GB" :
+        Number(res.summary.sum).toFixed(2) + "MB"
       unicom = {
         "packageName": res.packageName,
         "monthFree": monthFree,
